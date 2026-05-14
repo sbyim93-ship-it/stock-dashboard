@@ -144,19 +144,18 @@ section{margin-bottom:22px;}
 <script>
 // ── 설정 ────────────────────────────────────────────────
 const REFRESH_SEC = 60;
-const PROXY  = 'https://api.allorigins.win/get?url=';
-const PROXY2 = 'https://corsproxy.io/?';
+const PROXY = 'https://api.allorigins.win/get?url=';
 
-// ── 심볼 정의 ────────────────────────────────────────────
+// ── 심볼 정의 (yfinance 형식) ─────────────────────────────
 const NIGHT = [
-  { s:'^KS200',   n:'KOSPI 200',    b:'야간참고' },
-  { s:'^KQ11',    n:'코스닥150',     b:'야간참고' },
   { s:'USDKRW=X', n:'원/달러 환율',  fx:true },
+  { s:'^KS200',   n:'KOSPI 200',    b:'야간참고' },
+  { s:'^KQ11',    n:'코스닥',        b:'야간참고' },
 ];
 const US = [
   { s:'^DJI',  n:'다우존스' },
   { s:'^GSPC', n:'S&P 500' },
-  { s:'^IXIC', n:'나스닥 종합' },
+  { s:'^IXIC', n:'나스닥' },
   { s:'^SOX',  n:'필라델피아 반도체' },
 ];
 const FUTURES = [
@@ -199,31 +198,24 @@ function errCard(name) {
   return `<div class="card"><div class="card-name">${name}</div><div class="err">데이터 없음</div></div>`;
 }
 
-// ── Yahoo Finance 호출 ────────────────────────────────────
+// ── market_data.json 읽기 ────────────────────────────────
 async function fetchYahoo(symbols) {
-  const qs = symbols.join(',');
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(qs)}`;
-  const opts = { signal: AbortSignal.timeout(8000) };
-
-  // 직접 시도
   try {
-    const r = await fetch(url, opts);
-    if (r.ok) { const d=await r.json(); return d.quoteResponse?.result||[]; }
-  } catch {}
-
-  // allorigins 프록시
-  try {
-    const r = await fetch(PROXY+encodeURIComponent(url), opts);
-    if (r.ok) { const d=await r.json(); return JSON.parse(d.contents).quoteResponse?.result||[]; }
-  } catch {}
-
-  // corsproxy.io 프록시
-  try {
-    const r = await fetch(PROXY2+encodeURIComponent(url), opts);
-    if (r.ok) { const d=await r.json(); return d.quoteResponse?.result||[]; }
-  } catch {}
-
-  return [];
+    const r = await fetch('./market_data.json?t=' + Date.now(), {signal: AbortSignal.timeout(8000)});
+    if (!r.ok) { console.error('market_data.json 로드 실패:', r.status); return []; }
+    const d = await r.json();
+    if (d.updated) {
+      document.getElementById('last-upd').textContent = `데이터 ${d.updated}`;
+    }
+    return symbols.map(sym => {
+      const q = d.data?.[sym];
+      if (!q || q.price == null) return null;
+      return { symbol: sym, regularMarketPrice: q.price, regularMarketChange: q.change, regularMarketChangePercent: q.changePct };
+    }).filter(Boolean);
+  } catch(e) {
+    console.error('market_data.json 오류:', e.message);
+    return [];
+  }
 }
 
 // ── 시장 데이터 ───────────────────────────────────────────
