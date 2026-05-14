@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>주식 대시보드</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#070d1a;--card:#0d1524;--card2:#121d30;
+  --border:#1a2840;--text:#e2e8f0;--text2:#64748b;
+  --up:#22c55e;--down:#ef4444;--accent:#3b82f6;--yellow:#f59e0b;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Malgun Gothic',sans-serif;font-size:14px;min-height:100vh;}
+/* 헤더 */
+header{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:12px 16px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:100;
+}
+header h1{font-size:17px;font-weight:700;letter-spacing:-0.3px;}
+.hdr-right{text-align:right;font-size:11px;color:var(--text2);line-height:1.6;}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--up);margin-right:4px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+/* 레이아웃 */
+main{padding:12px 10px 60px;max-width:1200px;margin:0 auto;}
+section{margin-bottom:22px;}
+.sec-title{
+  font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:10px;padding-bottom:7px;
+  border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;
+}
+/* 카드 그리드 */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:13px 12px;transition:border-color .15s;
+}
+.card:hover{border-color:var(--accent);}
+.card-name{font-size:11px;color:var(--text2);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;}
+.card-price{font-size:19px;font-weight:700;margin-bottom:4px;white-space:nowrap;}
+.card-change{font-size:12px;font-weight:500;}
+.badge{display:inline-block;background:rgba(59,130,246,.15);color:var(--accent);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:600;}
+.up{color:var(--up);}
+.down{color:var(--down);}
+.neutral{color:var(--text2);}
+.skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;height:16px;margin-bottom:5px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.err{color:#f87171;font-size:11px;}
+/* 환율 강조 */
+.card.fx .card-price{font-size:22px;}
+/* NXT */
+.nxt-link{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;text-decoration:none;color:var(--text);margin-bottom:8px;
+}
+.nxt-link:hover{border-color:var(--accent);}
+.nxt-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+.nxt-sub{font-size:11px;color:var(--text2);}
+.nxt-arrow{color:var(--accent);font-size:18px;}
+/* 뉴스 */
+.news-list{list-style:none;}
+.news-item{
+  display:block;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;margin-bottom:7px;
+  text-decoration:none;color:var(--text);transition:border-color .15s;
+}
+.news-item:hover{border-color:var(--accent);}
+.news-title{font-size:13px;font-weight:500;line-height:1.45;margin-bottom:5px;}
+.news-meta{font-size:11px;color:var(--text2);display:flex;gap:8px;align-items:center;}
+.news-src{color:var(--accent);}
+.news-badge{
+  display:inline-block;background:rgba(34,197,94,.12);color:var(--up);
+  border-radius:4px;padding:1px 5px;font-size:10px;font-weight:600;
+}
+.toggle-btn{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:12px;color:var(--accent);
+  font-size:13px;font-weight:600;cursor:pointer;margin-top:2px;
+}
+.toggle-btn:hover{background:var(--card2);}
+#cnt{
+  display:inline-block;background:var(--accent);color:#fff;
+  border-radius:20px;padding:1px 7px;font-size:10px;margin-left:6px;
+}
+.empty{color:var(--text2);font-size:12px;padding:14px;text-align:center;}
+/* 모바일 최적화 */
+@media(max-width:400px){
+  .card-grid{grid-template-columns:repeat(2,1fr);}
+  .card-price{font-size:17px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📈 주식 대시보드</h1>
+  <div class="hdr-right">
+    <div><span class="dot"></span><span id="last-upd">로딩 중...</span></div>
+    <div id="cd" style="color:var(--yellow)"></div>
+  </div>
+</header>
+
+<main>
+
+<!-- 야간선물 / 환율 -->
+<section>
+  <div class="sec-title">🌙 야간선물 · 환율</div>
+  <div class="card-grid" id="g-night"></div>
+</section>
+
+<!-- 미국 주요 지수 -->
+<section>
+  <div class="sec-title">🇺🇸 미국 주요 지수</div>
+  <div class="card-grid" id="g-us"></div>
+</section>
+
+<!-- E-mini 지수선물 -->
+<section>
+  <div class="sec-title">📊 E-mini 지수선물</div>
+  <div class="card-grid" id="g-fut"></div>
+</section>
+
+<!-- NXT -->
+<section>
+  <div class="sec-title">🔮 넥스트트레이드 (NXT)</div>
+  <div id="g-nxt"></div>
+</section>
+
+<!-- 클릭e종목 뉴스 -->
+<section>
+  <div class="sec-title">
+    📰 클릭e종목 뉴스
+    <span id="cnt">0</span>
+  </div>
+  <ul class="news-list" id="news-prev"></ul>
+  <button class="toggle-btn" id="tog-btn" onclick="toggleNews()">▼ 24시간 전체 기사 보기</button>
+  <ul class="news-list" id="news-full" style="display:none;margin-top:8px;"></ul>
+</section>
+
+</main>
+
+<script>
+// ── 설정 ────────────────────────────────────────────────
+const REFRESH_SEC = 60;
+const PROXY  = 'https://api.allorigins.win/get?url=';
+const PROXY2 = 'https://corsproxy.io/?';
+
+// ── 심볼 정의 ────────────────────────────────────────────
+const NIGHT = [
+  { s:'^KS200',   n:'KOSPI 200',    b:'야간참고' },
+  { s:'^KQ11',    n:'코스닥150',     b:'야간참고' },
+  { s:'USDKRW=X', n:'원/달러 환율',  fx:true },
+];
+const US = [
+  { s:'^DJI',  n:'다우존스' },
+  { s:'^GSPC', n:'S&P 500' },
+  { s:'^IXIC', n:'나스닥 종합' },
+  { s:'^SOX',  n:'필라델피아 반도체' },
+];
+const FUTURES = [
+  { s:'ES=F', n:'E-mini S&P 500' },
+  { s:'YM=F', n:'E-mini Dow Jones' },
+  { s:'NQ=F', n:'E-mini Nasdaq 100' },
+];
+
+// ── 상태 ────────────────────────────────────────────────
+let allNews   = [];
+let showFull  = false;
+let cdVal     = REFRESH_SEC;
+let cdTimer   = null;
+
+// ── 유틸 ─────────────────────────────────────────────────
+const fmt = (n, d=2) => n==null||isNaN(n) ? '—' : n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtKrw = n => n==null ? '—' : n.toLocaleString('ko-KR',{maximumFractionDigits:1});
+const signFmt = n => n==null ? '—' : (n>0?'+':'')+fmt(n);
+const pctFmt  = n => n==null ? '—' : (n>0?'+':'')+fmt(n)+'%';
+const cls = n => n>0?'up':n<0?'down':'neutral';
+const arrow = n => n>0?'▲':n<0?'▼':'—';
+const timeStr = () => new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+// ── 카드 HTML ─────────────────────────────────────────────
+function card(name, price, chg, chgPct, badge='', fx=false) {
+  const c = cls(chgPct);
+  const priceStr = fx ? fmtKrw(price)+' ₩' : fmt(price);
+  const bdg = badge ? `<span class="badge">${badge}</span>` : '';
+  return `
+<div class="card${fx?' fx':''}">
+  <div class="card-name">${name}${bdg}</div>
+  <div class="card-price ${c}">${priceStr}</div>
+  <div class="card-change ${c}">${arrow(chgPct)} ${signFmt(chg)} (${pctFmt(chgPct)})</div>
+</div>`;
+}
+function skelCard(name) {
+  return `<div class="card"><div class="card-name">${name}</div><div class="skel"></div><div class="skel" style="width:60%"></div></div>`;
+}
+function errCard(name) {
+  return `<div class="card"><div class="card-name">${name}</div><div class="err">데이터 없음</div></div>`;
+}
+
+// ── Yahoo Finance 호출 ────────────────────────────────────
+async function fetchYahoo(symbols) {
+  const qs = symbols.join(',');
+  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(qs)}`;
+  const opts = { signal: AbortSignal.timeout(8000) };
+
+  // 직접 시도
+  try {
+    const r = await fetch(url, opts);
+    if (r.ok) { const d=await r.json(); return d.quoteResponse?.result||[]; }
+  } catch {}
+
+  // allorigins 프록시
+  try {
+    const r = await fetch(PROXY+encodeURIComponent(url), opts);
+    if (r.ok) { const d=await r.json(); return JSON.parse(d.contents).quoteResponse?.result||[]; }
+  } catch {}
+
+  // corsproxy.io 프록시
+  try {
+    const r = await fetch(PROXY2+encodeURIComponent(url), opts);
+    if (r.ok) { const d=await r.json(); return d.quoteResponse?.result||[]; }
+  } catch {}
+
+  return [];
+}
+
+// ── 시장 데이터 ───────────────────────────────────────────
+async function updateMarket() {
+  // 스켈레톤
+  document.getElementById('g-night').innerHTML = NIGHT.map(s=>skelCard(s.n)).join('');
+  document.getElementById('g-us').innerHTML    = US.map(s=>skelCard(s.n)).join('');
+  document.getElementById('g-fut').innerHTML   = FUTURES.map(s=>skelCard(s.n)).join('');
+
+  const all = [...NIGHT,...US,...FUTURES];
+  const results = await fetchYahoo(all.map(s=>s.s));
+  const map = Object.fromEntries(results.map(r=>[r.symbol,r]));
+
+  function render(id, defs) {
+    document.getElementById(id).innerHTML = defs.map(d=>{
+      const r = map[d.s];
+      if (!r) return errCard(d.n);
+      return card(d.n, r.regularMarketPrice, r.regularMarketChange, r.regularMarketChangePercent, d.b||'', !!d.fx);
+    }).join('');
+  }
+  render('g-night', NIGHT);
+  render('g-us', US);
+  render('g-fut', FUTURES);
+}
+
+// ── NXT ───────────────────────────────────────────────────
+async function updateNXT() {
+  const el = document.getElementById('g-nxt');
+
+  // NXT 데이터 파싱 시도
+  try {
+    const nxtUrl = 'https://www.nextade.co.kr';
+    const r = await fetch(PROXY+encodeURIComponent(nxtUrl), {signal:AbortSignal.timeout(10000)});
+    if (r.ok) {
+      const d = await r.json();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(d.contents||'', 'text/html');
+
+      // 숫자가 포함된 지수 항목 탐색
+      const cards = [];
+      doc.querySelectorAll('[class*="index"],[class*="price"],[class*="item"],[class*="stock"]').forEach(node=>{
+        const txt = (node.textContent||'').trim();
+        if (txt.length>2 && txt.length<80 && /\d{3,}/.test(txt) && !/script|style/i.test(node.tagName)) {
+          cards.push(txt);
+        }
+      });
+
+      if (cards.length > 0) {
+        el.innerHTML = `<div class="card-grid">${
+          [...new Set(cards)].slice(0,6).map(t=>`<div class="card"><div class="card-name">NXT 지수</div><div style="font-size:13px;line-height:1.5">${t}</div></div>`).join('')
+        }</div>`;
+        return;
+      }
+    }
+  } catch {}
+
+  // 파싱 실패 시 바로가기 카드 표시
+  el.innerHTML = `
+<a class="nxt-link" href="https://www.nextade.co.kr" target="_blank" rel="noopener">
+  <div>
+    <div class="nxt-title">넥스트트레이드 바로가기</div>
+    <div class="nxt-sub">www.nextade.co.kr — NXT 야간지수 확인</div>
+  </div>
+  <div class="nxt-arrow">→</div>
+</a>`;
+}
+
+// ── 뉴스 파싱 ─────────────────────────────────────────────
+function parseNews(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const items = [];
+  const now = Date.now();
+  const H24 = 24*3600*1000;
+
+  // 다양한 뉴스 선택자 시도
+  let nodes = [];
+  for (const sel of ['.news_area','li.bx','.news_wrap','.g_inner']) {
+    nodes = [...doc.querySelectorAll(sel)];
+    if (nodes.length) break;
+  }
+
+  // fallback: href 기반 추출
+  if (!nodes.length) {
+    doc.querySelectorAll('a[href*="news"]').forEach(a=>{
+      const title = a.getAttribute('title') || a.textContent.trim();
+      if (title.length>10 && title.length<200) {
+        items.push({ title, url: a.href||a.getAttribute('href')||'#', src:'', time:'' });
+      }
+    });
+    return [...new Map(items.map(i=>[i.title,i])).values()].slice(0,40);
+  }
+
+  nodes.forEach(node=>{
+    const aEl = node.querySelector('.news_tit,a[id^="news_title"],h3 a,h2 a,.title,.api_txt_lines');
+    const title = aEl?.getAttribute('title') || aEl?.textContent?.trim() || '';
+    if (!title || title.length<5) return;
+    const url = aEl?.href || aEl?.getAttribute('href') || '#';
+    const src = node.querySelector('.info_press,.press,[class*="office"]')?.textContent?.trim()||'';
+    const t   = node.querySelector('span.info_sub>span:last-child,time,.info_sub *.date')?.textContent?.trim()||'';
+    items.push({ title, url, src, time: t });
+  });
+
+  return items.slice(0,50);
+}
+
+function renderNewsItems(items, el) {
+  if (!items.length) { el.innerHTML=`<li class="empty">기사 없음</li>`; return; }
+  el.innerHTML = items.map(it=>`
+<li><a class="news-item" href="${it.url}" target="_blank" rel="noopener">
+  <div class="news-title">${it.title}</div>
+  <div class="news-meta">
+    ${it.src?`<span class="news-src">${it.src}</span>`:''}
+    ${it.time?`<span>${it.time}</span>`:''}
+  </div>
+</a></li>`).join('');
+}
+
+async function updateNews() {
+  const prev = document.getElementById('news-prev');
+  const full = document.getElementById('news-full');
+  prev.innerHTML = `<li class="empty">뉴스 불러오는 중...</li>`;
+
+  try {
+    const q = encodeURIComponent('클릭e종목');
+    // 24시간 내 최신순 검색
+    const nUrl = `https://search.naver.com/search.naver?where=news&query=${q}&sort=1&nso=so:dd,p:1d,a:all`;
+    const r = await fetch(PROXY+encodeURIComponent(nUrl), {signal:AbortSignal.timeout(12000)});
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    allNews = parseNews(d.contents||'');
+    document.getElementById('cnt').textContent = allNews.length;
+    renderNewsItems(allNews.slice(0,3), prev);
+    renderNewsItems(allNews, full);
+  } catch {
+    prev.innerHTML = `
+<li><div class="news-item" style="cursor:default">
+  <div class="news-title" style="color:var(--text2)">뉴스 로드 실패 (CORS 제한)</div>
+  <a href="https://search.naver.com/search.naver?where=news&query=%ED%81%B4%EB%A6%ADe%EC%A2%85%EB%AA%A9&sort=1" target="_blank" style="color:var(--accent);font-size:12px">
+    네이버에서 직접 보기 →
+  </a>
+</div></li>`;
+  }
+}
+
+// ── 뉴스 토글 ─────────────────────────────────────────────
+function toggleNews() {
+  showFull = !showFull;
+  const btn  = document.getElementById('tog-btn');
+  const full = document.getElementById('news-full');
+  if (showFull) {
+    full.style.display = 'block';
+    btn.textContent = '▲ 접기';
+  } else {
+    full.style.display = 'none';
+    btn.innerHTML = `▼ 24시간 전체 기사 보기`;
+  }
+}
+
+// ── 카운트다운 ────────────────────────────────────────────
+function startCountdown() {
+  cdVal = REFRESH_SEC;
+  clearInterval(cdTimer);
+  cdTimer = setInterval(()=>{
+    cdVal--;
+    document.getElementById('cd').textContent = `${cdVal}초 후 갱신`;
+    if (cdVal<=0) refresh();
+  }, 1000);
+}
+
+// ── 전체 갱신 ─────────────────────────────────────────────
+async function refresh() {
+  document.getElementById('last-upd').textContent = `갱신 ${timeStr()}`;
+  startCountdown();
+  await Promise.all([updateMarket(), updateNXT(), updateNews()]);
+}
+
+// ── 시작 ──────────────────────────────────────────────────
+refresh();
+</script>
+</body>
+</html>
