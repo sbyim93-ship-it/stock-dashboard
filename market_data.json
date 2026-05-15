@@ -1,12 +1,12 @@
 {
-  "updated": "05/15 19:01",
+  "updated": "05/16 01:30",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1499.98,
-      "change": 7.2999,
-      "changePct": 0.489
+      "price": 1497.9399,
+      "change": 5.2599,
+      "changePct": 0.3524
     },
     "^KS200": {
       "name": "KOSPI 200",
@@ -18,51 +18,51 @@
     "^KQ11": {
       "name": "코스닥",
       "badge": "야간참고",
-      "price": 1129.8199,
-      "change": -61.2701,
+      "price": 1129.82,
+      "change": -61.27,
       "changePct": -5.144
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 50063.4609,
-      "change": 370.2609,
-      "changePct": 0.7451
+      "price": 49615.3984,
+      "change": -448.0616,
+      "changePct": -0.895
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7501.2402,
-      "change": 56.9902,
-      "changePct": 0.7656
+      "price": 7433.6099,
+      "change": -67.6301,
+      "changePct": -0.9016
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 26635.2207,
-      "change": 232.8767,
-      "changePct": 0.882
+      "price": 26330.9668,
+      "change": -304.2562,
+      "changePct": -1.1423
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 12073.7803,
-      "change": 55.7983,
-      "changePct": 0.4643
+      "price": 11696.3496,
+      "change": -377.4294,
+      "changePct": -3.126
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7439.0,
-      "change": -67.0,
-      "changePct": -0.8926
+      "price": 7443.0,
+      "change": -63.0,
+      "changePct": -0.8393
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 49789.0,
-      "change": -255.0,
-      "changePct": -0.5096
+      "price": 49655.0,
+      "change": -389.0,
+      "changePct": -0.7773
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29189.25,
-      "change": -379.5,
-      "changePct": -1.2834
+      "price": 29270.0,
+      "change": -298.75,
+      "changePct": -1.0104
     }
   }
 }
