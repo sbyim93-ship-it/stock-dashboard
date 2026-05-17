@@ -1,4 +1,5 @@
 import yfinance as yf
+import requests
 import json
 from datetime import datetime
 import pytz
@@ -6,8 +7,6 @@ import time
 
 SYMBOLS = {
     "USDKRW=X": {"name": "원/달러 환율", "fx": True},
-    "^KS200":   {"name": "KOSPI 200",   "badge": "야간참고"},
-    "^KQ11":    {"name": "코스닥",       "badge": "야간참고"},
     "^DJI":     {"name": "다우존스"},
     "^GSPC":    {"name": "S&P 500"},
     "^IXIC":    {"name": "나스닥"},
@@ -17,7 +16,85 @@ SYMBOLS = {
     "NQ=F":     {"name": "E-mini Nasdaq 100"},
 }
 
+
+def _parse_naver_index(d, label):
+    """네이버 /api/index/{code}/basic 응답에서 price/change/changePct 추출"""
+    try:
+        price = float(str(d.get('closePrice', '')).replace(',', ''))
+        chg   = float(str(d.get('compareToPreviousClosePrice', '0')).replace(',', '').replace('+', ''))
+        pct   = float(str(d.get('fluctuationsRatio', '0')).replace(',', '').replace('+', ''))
+        direction = d.get('compareToPreviousPrice', {})
+        if isinstance(direction, dict):
+            code = direction.get('code', '')
+        else:
+            code = str(direction)
+        if 'FALL' in code or 'DOWN' in code or code == '2':
+            chg, pct = -abs(chg), -abs(pct)
+        print(f"  ✓ {label}: {price} ({chg:+.2f}, {pct:+.2f}%)")
+        return price, chg, pct
+    except Exception as e:
+        print(f"  ✗ {label} 파싱 오류: {e}")
+        return None, None, None
+
+
+def fetch_naver_night_futures():
+    """야간KP선물/KQ선물 — 네이버 금융 /api/index 사용"""
+    hdrs = {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'ko-KR,ko;q=0.9',
+        'Referer': 'https://m.stock.naver.com/',
+    }
+
+    nf_results = {}
+
+    # ── 야간KP선물 (FUT = 코스피200 야간선물지수) ──
+    try:
+        r = requests.get("https://m.stock.naver.com/api/index/FUT/basic", headers=hdrs, timeout=8)
+        if r.ok:
+            price, chg, pct = _parse_naver_index(r.json(), '야간KP선물')
+            if price:
+                nf_results['KP_night'] = {'name': '야간KP선물', 'price': price, 'change': chg, 'changePct': pct}
+        else:
+            print(f"  ✗ 야간KP선물: HTTP {r.status_code}")
+    except Exception as e:
+        print(f"  ✗ 야간KP선물: {e}")
+
+    # ── 야간KQ선물 ──
+    kq_found = False
+    for kq_code in ['KQFUT', 'KQF']:
+        try:
+            r = requests.get(f"https://m.stock.naver.com/api/index/{kq_code}/basic", headers=hdrs, timeout=5)
+            if r.ok:
+                price, chg, pct = _parse_naver_index(r.json(), '야간KQ선물')
+                if price:
+                    nf_results['KQ_night'] = {'name': '야간KQ선물', 'price': price, 'change': chg, 'changePct': pct}
+                    kq_found = True
+                    break
+        except Exception:
+            pass
+
+    if not kq_found:
+        try:
+            r = requests.get("https://m.stock.naver.com/api/index/KQ150/basic", headers=hdrs, timeout=5)
+            if r.ok:
+                price, chg, pct = _parse_naver_index(r.json(), '야간KQ(코스닥150)')
+                if price:
+                    nf_results['KQ_night'] = {'name': '야간KQ(코스닥150)', 'price': price, 'change': chg, 'changePct': pct}
+                    print(f"  – KQ선물 없음, 코스닥150 지수로 표시")
+        except Exception as e:
+            print(f"  ✗ 야간KQ: {e}")
+
+    for key, label in [('KP_night', '야간KP선물'), ('KQ_night', '야간KQ선물')]:
+        if key not in nf_results:
+            nf_results[key] = {'name': label, 'price': None, 'change': None, 'changePct': None}
+            print(f"  – {label}: 데이터 없음")
+
+    return nf_results
+
+
 result = {}
+
 for sym, meta in SYMBOLS.items():
     try:
         fi = yf.Ticker(sym).fast_info
@@ -36,6 +113,9 @@ for sym, meta in SYMBOLS.items():
         print(f"  ✗ {sym}: {e}")
         result[sym] = {**meta, "price": None, "change": None, "changePct": None}
     time.sleep(0.3)
+
+print("\n야간선물 수집 중...")
+result.update(fetch_naver_night_futures())
 
 kst = pytz.timezone("Asia/Seoul")
 output = {
