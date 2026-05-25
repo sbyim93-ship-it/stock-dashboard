@@ -1,12 +1,12 @@
 {
-  "updated": "05/25 19:43",
+  "updated": "05/25 22:50",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1512.89,
-      "change": -7.64,
-      "changePct": -0.5025
+      "price": 1513.3101,
+      "change": -7.22,
+      "changePct": -0.4748
     },
     "^KS200": {
       "name": "KOSPI 200",
