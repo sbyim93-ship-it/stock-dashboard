@@ -1,18 +1,18 @@
 {
-  "updated": "05/29 22:52",
+  "updated": "05/30 02:24",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1505.9301,
-      "change": 12.2401,
-      "changePct": 0.8195
+      "price": 1504.3,
+      "change": 10.6101,
+      "changePct": 0.7103
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1342.8199,
-      "change": 50.2499,
+      "price": 1342.82,
+      "change": 50.25,
       "changePct": 3.8876
     },
     "^KQ11": {
@@ -24,45 +24,45 @@
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 50819.5586,
-      "change": 154.0898,
-      "changePct": 0.3041
+      "price": 51009.3203,
+      "change": 343.8516,
+      "changePct": 0.6787
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7593.3999,
-      "change": 29.7699,
-      "changePct": 0.3936
+      "price": 7581.1602,
+      "change": 17.5302,
+      "changePct": 0.2318
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 27067.6797,
-      "change": 150.2097,
-      "changePct": 0.558
+      "price": 26969.3242,
+      "change": 51.8542,
+      "changePct": 0.1926
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 13088.3779,
-      "change": 259.2339,
-      "changePct": 2.0207
+      "price": 12804.1455,
+      "change": -24.9985,
+      "changePct": -0.1949
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7604.0,
-      "change": 23.5,
-      "changePct": 0.31
+      "price": 7598.25,
+      "change": 17.75,
+      "changePct": 0.2342
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 50923.0,
-      "change": 156.0,
-      "changePct": 0.3073
+      "price": 51025.0,
+      "change": 258.0,
+      "changePct": 0.5082
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 30452.25,
-      "change": 191.5,
-      "changePct": 0.6328
+      "price": 30398.5,
+      "change": 137.75,
+      "changePct": 0.4552
     }
   }
 }
