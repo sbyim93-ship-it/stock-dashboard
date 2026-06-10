@@ -1,68 +1,68 @@
 {
-  "updated": "06/10 10:34",
+  "updated": "06/10 15:03",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1520.48,
-      "change": -6.11,
-      "changePct": -0.4002
+      "price": 1523.84,
+      "change": -3.38,
+      "changePct": -0.2213
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1255.55,
-      "change": -33.71,
-      "changePct": -2.6147
+      "price": 1201.71,
+      "change": -87.55,
+      "changePct": -6.7907
     },
     "^KQ11": {
       "name": "코스닥",
       "badge": "야간참고",
-      "price": 975.52,
-      "change": 8.65,
-      "changePct": 0.8946
+      "price": 937.81,
+      "change": -29.06,
+      "changePct": -3.0056
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 50872.1094,
-      "change": 86.0994,
+      "price": 50872.11,
+      "change": 86.1,
       "changePct": 0.1695
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7386.6499,
-      "change": -19.0801,
+      "price": 7386.65,
+      "change": -19.08,
       "changePct": -0.2576
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 25678.8223,
-      "change": -250.8397,
+      "price": 25678.822,
+      "change": -250.84,
       "changePct": -0.9674
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 12657.8096,
-      "change": -248.8824,
+      "price": 12657.81,
+      "change": -248.882,
       "changePct": -1.9283
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7384.25,
-      "change": -45.5,
-      "changePct": -0.6124
+      "price": 7365.0,
+      "change": -12.0,
+      "changePct": -0.1627
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 50881.0,
-      "change": -15.0,
-      "changePct": -0.0295
+      "price": 50812.0,
+      "change": -47.0,
+      "changePct": -0.0924
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29078.25,
-      "change": -496.25,
-      "changePct": -1.678
+      "price": 28930.5,
+      "change": -87.5,
+      "changePct": -0.3015
     }
   }
 }
