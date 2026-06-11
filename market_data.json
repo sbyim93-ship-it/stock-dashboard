@@ -1,68 +1,68 @@
 {
-  "updated": "06/11 15:23",
+  "updated": "06/11 20:04",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1528.97,
-      "change": 8.4299,
-      "changePct": 0.5544
+      "price": 1530.38,
+      "change": 9.84,
+      "changePct": 0.6471
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1222.6801,
-      "change": -4.4399,
-      "changePct": -0.3618
+      "price": 1231.54,
+      "change": 4.42,
+      "changePct": 0.3602
     },
     "^KQ11": {
       "name": "코스닥",
       "badge": "야간참고",
-      "price": 984.58,
-      "change": 32.95,
-      "changePct": 3.4625
+      "price": 996.93,
+      "change": 45.3,
+      "changePct": 4.7603
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 49918.78,
-      "change": -953.33,
+      "price": 49918.7812,
+      "change": -953.3288,
       "changePct": -1.874
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7266.99,
-      "change": -119.66,
+      "price": 7266.9902,
+      "change": -119.6598,
       "changePct": -1.6199
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 25169.502,
-      "change": -509.32,
+      "price": 25169.5,
+      "change": -509.322,
       "changePct": -1.9834
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 12206.462,
-      "change": -451.348,
+      "price": 12206.46,
+      "change": -451.35,
       "changePct": -3.5658
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7304.75,
-      "change": 0.25,
-      "changePct": 0.0034
+      "price": 7332.25,
+      "change": 27.75,
+      "changePct": 0.3799
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 50114.0,
-      "change": 13.0,
-      "changePct": 0.0259
+      "price": 50355.0,
+      "change": 254.0,
+      "changePct": 0.507
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 28741.75,
-      "change": 7.25,
-      "changePct": 0.0252
+      "price": 28898.5,
+      "change": 164.0,
+      "changePct": 0.5707
     }
   }
 }
