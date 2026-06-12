@@ -1,18 +1,18 @@
 {
-  "updated": "06/12 22:56",
+  "updated": "06/13 01:38",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1520.6801,
-      "change": 4.67,
-      "changePct": 0.308
+      "price": 1517.6899,
+      "change": 1.6799,
+      "changePct": 0.1108
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1291.3199,
-      "change": 59.7799,
+      "price": 1291.32,
+      "change": 59.78,
       "changePct": 4.8541
     },
     "^KQ11": {
@@ -24,45 +24,45 @@
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 50903.3711,
-      "change": 64.043,
-      "changePct": 0.126
+      "price": 51150.0781,
+      "change": 310.75,
+      "changePct": 0.6112
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7379.9702,
-      "change": -13.0898,
-      "changePct": -0.1771
+      "price": 7421.6201,
+      "change": 28.5601,
+      "changePct": 0.3863
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 25666.7617,
-      "change": -142.8983,
-      "changePct": -0.5537
+      "price": 25853.2793,
+      "change": 43.6193,
+      "changePct": 0.169
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 13168.9805,
-      "change": -2.4575,
-      "changePct": -0.0187
+      "price": 13432.5684,
+      "change": 261.1304,
+      "changePct": 1.9826
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7376.0,
-      "change": -30.75,
-      "changePct": -0.4152
+      "price": 7425.25,
+      "change": 18.5,
+      "changePct": 0.2498
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 51287.0,
-      "change": 368.0,
-      "changePct": 0.7227
+      "price": 51559.0,
+      "change": 640.0,
+      "changePct": 1.2569
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29307.75,
-      "change": -221.75,
-      "changePct": -0.7509
+      "price": 29596.25,
+      "change": 66.75,
+      "changePct": 0.226
     }
   }
 }
