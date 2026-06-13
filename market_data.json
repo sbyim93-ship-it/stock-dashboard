@@ -1,5 +1,5 @@
 {
-  "updated": "06/13 08:51",
+  "updated": "06/13 11:00",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
@@ -11,8 +11,8 @@
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1291.32,
-      "change": 59.78,
+      "price": 1291.3199,
+      "change": 59.7799,
       "changePct": 4.8541
     },
     "^KQ11": {
