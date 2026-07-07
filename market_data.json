@@ -1,18 +1,18 @@
 {
-  "updated": "07/07 22:38",
+  "updated": "07/08 01:07",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1514.3,
-      "change": -15.5299,
-      "changePct": -1.0151
+      "price": 1513.35,
+      "change": -16.48,
+      "changePct": -1.0772
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1225.5699,
-      "change": -67.5601,
+      "price": 1225.57,
+      "change": -67.56,
       "changePct": -5.2245
     },
     "^KQ11": {
@@ -24,45 +24,45 @@
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 53183.2109,
-      "change": 123.1094,
-      "changePct": 0.232
+      "price": 52870.2695,
+      "change": -189.832,
+      "changePct": -0.3578
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7518.6899,
-      "change": -19.6499,
-      "changePct": -0.2607
+      "price": 7505.1201,
+      "change": -33.2197,
+      "changePct": -0.4407
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 25897.0723,
-      "change": -224.0877,
-      "changePct": -0.8579
+      "price": 25860.0703,
+      "change": -261.0897,
+      "changePct": -0.9995
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 12249.7324,
-      "change": -650.4096,
-      "changePct": -5.0419
+      "price": 12260.4951,
+      "change": -639.6469,
+      "changePct": -4.9584
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7581.25,
-      "change": 8.0,
-      "changePct": 0.1056
+      "price": 7547.0,
+      "change": -26.25,
+      "changePct": -0.3466
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 53644.0,
-      "change": 225.0,
-      "changePct": 0.4212
+      "price": 53153.0,
+      "change": -266.0,
+      "changePct": -0.498
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29592.25,
-      "change": -69.5,
-      "changePct": -0.2343
+      "price": 29362.25,
+      "change": -299.5,
+      "changePct": -1.0097
     }
   }
 }
