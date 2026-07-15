@@ -1,12 +1,12 @@
 {
-  "updated": "07/16 06:33",
+  "updated": "07/16 07:33",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1486.0,
-      "change": -2.6,
-      "changePct": -0.1747
+      "price": 1486.54,
+      "change": -2.0599,
+      "changePct": -0.1384
     },
     "^KS200": {
       "name": "KOSPI 200",
@@ -48,21 +48,21 @@
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7616.0,
-      "change": 8.75,
-      "changePct": 0.115
+      "price": 7617.75,
+      "change": 10.5,
+      "changePct": 0.138
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 52897.0,
-      "change": 52.0,
-      "changePct": 0.0984
+      "price": 52912.0,
+      "change": 67.0,
+      "changePct": 0.1268
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29707.5,
-      "change": -306.5,
-      "changePct": -1.0212
+      "price": 29720.0,
+      "change": -294.0,
+      "changePct": -0.9795
     }
   }
 }
