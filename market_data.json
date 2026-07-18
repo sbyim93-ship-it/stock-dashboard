@@ -1,5 +1,5 @@
 {
-  "updated": "07/18 12:21",
+  "updated": "07/18 14:39",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
@@ -36,21 +36,21 @@
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 25520.2441,
-      "change": -361.7029,
+      "price": 25520.2402,
+      "change": -361.7068,
       "changePct": -1.3975
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 11673.8887,
-      "change": -193.6143,
+      "price": 11673.8896,
+      "change": -193.6134,
       "changePct": -1.6315
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7494.75,
-      "change": -31.0,
-      "changePct": -0.4119
+      "price": 7497.75,
+      "change": -28.0,
+      "changePct": -0.3721
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
@@ -60,9 +60,9 @@
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 28768.25,
-      "change": -154.0,
-      "changePct": -0.5325
+      "price": 28773.25,
+      "change": -149.0,
+      "changePct": -0.5152
     }
   }
 }
