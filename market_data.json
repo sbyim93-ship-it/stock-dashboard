@@ -1,5 +1,5 @@
 {
-  "updated": "07/27 05:38",
+  "updated": "07/27 06:32",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
@@ -36,15 +36,15 @@
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 24975.824,
-      "change": -161.869,
+      "price": 24975.8203,
+      "change": -161.8727,
       "changePct": -0.6439
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 11818.886,
-      "change": -524.951,
-      "changePct": -4.2527
+      "price": 11818.8799,
+      "change": -524.9571,
+      "changePct": -4.2528
     },
     "ES=F": {
       "name": "E-mini S&P 500",
