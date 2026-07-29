@@ -1,68 +1,68 @@
 {
-  "updated": "07/29 12:32",
+  "updated": "07/29 15:15",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1451.48,
-      "change": -2.3101,
-      "changePct": -0.1589
+      "price": 1447.78,
+      "change": -5.97,
+      "changePct": -0.4107
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 882.14,
-      "change": -64.63,
-      "changePct": -6.8264
+      "price": 884.11,
+      "change": -62.66,
+      "changePct": -6.6183
     },
     "^KQ11": {
       "name": "코스닥",
       "badge": "야간참고",
-      "price": 654.14,
-      "change": -43.62,
-      "changePct": -6.2514
+      "price": 658.13,
+      "change": -39.63,
+      "changePct": -5.6796
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 52747.3203,
-      "change": 537.2403,
+      "price": 52747.32,
+      "change": 537.24,
       "changePct": 1.029
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7428.7798,
-      "change": 15.5998,
+      "price": 7428.78,
+      "change": 15.6,
       "changePct": 0.2104
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 24876.9121,
-      "change": -55.1699,
+      "price": 24876.912,
+      "change": -55.17,
       "changePct": -0.2213
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 11035.6826,
-      "change": -519.1974,
+      "price": 11035.683,
+      "change": -519.197,
       "changePct": -4.4933
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7460.0,
-      "change": 19.25,
-      "changePct": 0.2587
+      "price": 7452.25,
+      "change": -7.25,
+      "changePct": -0.0972
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 52895.0,
-      "change": 478.0,
-      "changePct": 0.9119
+      "price": 52878.0,
+      "change": -18.0,
+      "changePct": -0.034
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 27819.25,
-      "change": -231.5,
-      "changePct": -0.8253
+      "price": 27745.0,
+      "change": -72.75,
+      "changePct": -0.2615
     }
   }
 }
