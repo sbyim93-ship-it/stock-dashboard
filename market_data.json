@@ -1,18 +1,18 @@
 {
-  "updated": "07/31 23:35",
+  "updated": "08/01 01:18",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1438.08,
-      "change": 16.9199,
-      "changePct": 1.1906
+      "price": 1437.63,
+      "change": 16.47,
+      "changePct": 1.1589
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1046.8101,
-      "change": 174.3201,
+      "price": 1046.81,
+      "change": 174.32,
       "changePct": 19.9796
     },
     "^KQ11": {
@@ -24,45 +24,45 @@
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 52153.9883,
-      "change": -54.6602,
-      "changePct": -0.1047
+      "price": 52393.9102,
+      "change": 185.2617,
+      "changePct": 0.3548
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7428.6899,
-      "change": -8.8398,
-      "changePct": -0.1189
+      "price": 7455.3901,
+      "change": 17.8604,
+      "changePct": 0.2401
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 25132.4902,
-      "change": 10.3122,
-      "changePct": 0.041
+      "price": 25200.4551,
+      "change": 78.2771,
+      "changePct": 0.3116
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 11451.4531,
-      "change": 148.4661,
-      "changePct": 1.3135
+      "price": 11366.4434,
+      "change": 63.4564,
+      "changePct": 0.5614
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7447.75,
-      "change": -49.75,
-      "changePct": -0.6636
+      "price": 7478.5,
+      "change": -19.0,
+      "changePct": -0.2534
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 52231.0,
-      "change": -344.0,
-      "changePct": -0.6543
+      "price": 52499.0,
+      "change": -76.0,
+      "changePct": -0.1446
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 28210.0,
-      "change": -251.75,
-      "changePct": -0.8845
+      "price": 28258.25,
+      "change": -203.5,
+      "changePct": -0.715
     }
   }
 }
