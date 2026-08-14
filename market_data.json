@@ -1,19 +1,19 @@
 {
-  "updated": "08/15 00:21",
+  "updated": "08/15 01:10",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1412.51,
-      "change": -5.6,
-      "changePct": -0.3949
+      "price": 1414.1899,
+      "change": -3.92,
+      "changePct": -0.2764
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1098.1801,
-      "change": 26.9401,
-      "changePct": 2.5149
+      "price": 1098.18,
+      "change": 26.94,
+      "changePct": 2.5148
     },
     "^KQ11": {
       "name": "코스닥",
@@ -24,45 +24,45 @@
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 53739.4297,
-      "change": -95.1484,
-      "changePct": -0.1767
+      "price": 53700.7109,
+      "change": -133.8672,
+      "changePct": -0.2487
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7785.3799,
-      "change": -13.48,
-      "changePct": -0.1728
+      "price": 7783.9399,
+      "change": -14.9199,
+      "changePct": -0.1913
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 26699.0547,
-      "change": -103.9703,
-      "changePct": -0.3879
+      "price": 26687.8848,
+      "change": -115.1402,
+      "changePct": -0.4296
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 12342.4219,
-      "change": -113.5761,
-      "changePct": -0.9118
+      "price": 12312.3145,
+      "change": -143.6835,
+      "changePct": -1.1535
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7809.5,
-      "change": -14.75,
-      "changePct": -0.1885
+      "price": 7805.0,
+      "change": -19.25,
+      "changePct": -0.246
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 53824.0,
-      "change": -145.0,
-      "changePct": -0.2687
+      "price": 53766.0,
+      "change": -203.0,
+      "changePct": -0.3761
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 30112.0,
-      "change": -41.75,
-      "changePct": -0.1385
+      "price": 30071.0,
+      "change": -82.75,
+      "changePct": -0.2744
     }
   }
 }
