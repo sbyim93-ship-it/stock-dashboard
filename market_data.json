@@ -1,12 +1,12 @@
 {
-  "updated": "08/17 22:06",
+  "updated": "08/17 22:48",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1411.16,
-      "change": -5.3199,
-      "changePct": -0.3756
+      "price": 1413.3199,
+      "change": -3.16,
+      "changePct": -0.2231
     },
     "^KS200": {
       "name": "KOSPI 200",
@@ -24,45 +24,45 @@
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 53732.4102,
-      "change": -107.5798,
-      "changePct": -0.1998
+      "price": 53592.2891,
+      "change": -141.2227,
+      "changePct": -0.2628
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7785.7598,
-      "change": -13.2302,
-      "changePct": -0.1696
+      "price": 7775.77,
+      "change": -10.2397,
+      "changePct": -0.1315
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 26729.1602,
-      "change": -73.8648,
-      "changePct": -0.2756
+      "price": 26726.6895,
+      "change": -2.4745,
+      "changePct": -0.0093
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 12417.0498,
-      "change": -38.9482,
-      "changePct": -0.3127
+      "price": 12633.4678,
+      "change": 216.4178,
+      "changePct": 1.7429
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7802.75,
-      "change": -9.5,
-      "changePct": -0.1216
+      "price": 7797.75,
+      "change": -14.5,
+      "changePct": -0.1856
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 53616.0,
-      "change": -127.0,
-      "changePct": -0.2363
+      "price": 53588.0,
+      "change": -155.0,
+      "changePct": -0.2884
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 30200.75,
-      "change": -45.0,
-      "changePct": -0.1488
+      "price": 30211.0,
+      "change": -34.75,
+      "changePct": -0.1149
     }
   }
 }
