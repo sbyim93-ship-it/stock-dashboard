@@ -1,26 +1,26 @@
 {
-  "updated": "08/19 13:17",
+  "updated": "08/19 13:53",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1400.1801,
-      "change": -12.1499,
-      "changePct": -0.8603
+      "price": 1399.58,
+      "change": -12.75,
+      "changePct": -0.9028
     },
     "^KS200": {
       "name": "KOSPI 200",
       "badge": "야간참고",
-      "price": 1015.9,
-      "change": -59.4199,
-      "changePct": -5.5258
+      "price": 1013.7,
+      "change": -61.6199,
+      "changePct": -5.7304
     },
     "^KQ11": {
       "name": "코스닥",
       "badge": "야간참고",
-      "price": 831.92,
-      "change": -2.34,
-      "changePct": -0.2805
+      "price": 829.49,
+      "change": -4.77,
+      "changePct": -0.5718
     },
     "^DJI": {
       "name": "다우존스",
@@ -48,21 +48,21 @@
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7706.75,
-      "change": -37.75,
-      "changePct": -0.4874
+      "price": 7704.0,
+      "change": -2.75,
+      "changePct": -0.0357
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 53349.0,
-      "change": -136.0,
-      "changePct": -0.2543
+      "price": 53350.0,
+      "change": -19.0,
+      "changePct": -0.0356
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29526.0,
-      "change": -374.0,
-      "changePct": -1.2508
+      "price": 29500.75,
+      "change": -27.0,
+      "changePct": -0.0914
     }
   }
 }
