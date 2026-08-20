@@ -1,0 +1,22 @@
+name: US Market Summary
+
+on:
+  schedule:
+    # 20:00 UTC, Mon-Fri = 05:00 KST Tue-Sat (전 거래일 미국 마감 요약)
+    - cron: '0 20 * * 1-5'
+  workflow_dispatch: {}
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install anthropic requests
+      - run: python us_market_summary/report.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.US_MARKET_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.US_MARKET_TELEGRAM_CHAT_IDS }}
