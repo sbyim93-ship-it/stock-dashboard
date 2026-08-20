@@ -1,68 +1,66 @@
 {
-  "updated": "08/21 00:49",
+  "updated": "08/21 01:14",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1393.61,
-      "change": 5.1,
-      "changePct": 0.3673
-    },
-    "^KS200": {
-      "name": "KOSPI 200",
-      "badge": "야간참고",
-      "price": 1080.98,
-      "change": 68.37,
-      "changePct": 6.7519
-    },
-    "^KQ11": {
-      "name": "코스닥",
-      "badge": "야간참고",
-      "price": 840.89,
-      "change": 16.43,
-      "changePct": 1.9928
+      "price": 1394.64,
+      "change": 6.13,
+      "changePct": 0.4415
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 53017.2617,
-      "change": -450.0781,
-      "changePct": -0.8418
+      "price": 53002.6094,
+      "change": -464.7305,
+      "changePct": -0.8692
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7675.2998,
-      "change": -32.73,
-      "changePct": -0.4246
+      "price": 7673.5601,
+      "change": -34.4697,
+      "changePct": -0.4472
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 26083.7441,
-      "change": -247.3459,
-      "changePct": -0.9394
+      "price": 26088.2285,
+      "change": -242.8615,
+      "changePct": -0.9223
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 11741.1367,
-      "change": 2.9107,
-      "changePct": 0.0248
+      "price": 11743.9434,
+      "change": 5.7174,
+      "changePct": 0.0487
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7694.0,
-      "change": -44.75,
-      "changePct": -0.5783
+      "price": 7695.25,
+      "change": -43.5,
+      "changePct": -0.5621
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 53101.0,
-      "change": -455.0,
-      "changePct": -0.8496
+      "price": 53081.0,
+      "change": -475.0,
+      "changePct": -0.8869
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 29280.0,
-      "change": -333.0,
-      "changePct": -1.1245
+      "price": 29323.0,
+      "change": -290.0,
+      "changePct": -0.9793
+    },
+    "KP_night": {
+      "name": "야간KP선물",
+      "price": 1082.25,
+      "change": -66.0,
+      "changePct": -6.49
+    },
+    "KQ_night": {
+      "name": "야간KQ선물",
+      "price": null,
+      "change": null,
+      "changePct": null
     }
   }
 }
