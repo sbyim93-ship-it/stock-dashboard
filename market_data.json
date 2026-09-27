@@ -1,12 +1,12 @@
 {
-  "updated": "09/28 01:52",
+  "updated": "09/28 04:53",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1355.28,
-      "change": -11.71,
-      "changePct": -0.8566
+      "price": 1353.42,
+      "change": -13.5699,
+      "changePct": -0.9927
     },
     "^DJI": {
       "name": "다우존스",
