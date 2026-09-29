@@ -15,7 +15,7 @@ import requests
 
 from fetch_data import build_data_block
 
-MODEL = "claude-opus-5"
+MODEL = "claude-sonnet-5"
 MAX_PAUSE_RESTARTS = 5
 TELEGRAM_CHUNK_LIMIT = 3900
 
