@@ -1,10 +1,6 @@
 name: US Market Summary
 
 on:
-  schedule:
-    # 21:15 UTC, Mon-Fri = 06:15 KST Tue-Sat (미국 여름시간 기준 마감 20:00 UTC + 75분 버퍼,
-    # 마감 속보 기사가 올라올 시간을 준 것 — 11월 서머타임 해제되면 buffer가 1시간 줄어듦)
-    - cron: '15 21 * * 1-5'
   workflow_dispatch: {}
 
 jobs:
