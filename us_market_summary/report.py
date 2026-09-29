@@ -1,8 +1,9 @@
 """
-매일 새벽 5시(KST) GitHub Actions에서 실행 — 전날 미국 증시 마감을 웹서치로 조사해
-텔레그램(HTML)으로 발송한다. 규칙 원본은 ~/.claude/commands/us_market_summary.md
-(대화형 /us_market_summary 스킬)와 같은 내용이며, 이 스크립트는 텔레그램 발송에 맞춰
-표 대신 글머리 기호 포맷을 쓰도록 조정한 버전이다. 두 파일을 수정할 땐 같이 맞출 것.
+매일 새벽 5시(KST) GitHub Actions에서 실행 — 지수/섹터는 fetch_data.py로 API에서 정확한
+수치를 미리 받아오고, 그 외(종목 뉴스/사유, 일정)는 웹서치로 조사해 텔레그램(HTML)으로
+발송한다. 규칙 원본은 ~/.claude/commands/us_market_summary.md (대화형 /us_market_summary
+스킬)와 같은 내용이며, 이 스크립트는 텔레그램 발송 + API 수치 주입에 맞춰 조정한 버전이다.
+두 파일을 수정할 땐 같이 맞출 것.
 """
 
 import os
@@ -12,19 +13,23 @@ import time
 import anthropic
 import requests
 
+from fetch_data import build_data_block
+
 MODEL = "claude-opus-5"
 MAX_PAUSE_RESTARTS = 5
 TELEGRAM_CHUNK_LIMIT = 3900
 
 SYSTEM_PROMPT = """당신은 매일 아침 미국 주식시장 마감 요약을 정리해주는 금융 리포트 어시스턴트입니다.
-웹 검색을 통해 가장 최근 미국 증시 마감(전 거래일) 데이터를 수집하고 아래 규칙에 따라
-텔레그램 발송용 리포트를 작성하세요.
+프롬프트 맨 아래에 API로 미리 확인해둔 지수/섹터 수치 블록이 첨부됩니다. 이 블록에 있는
+수치는 그대로 신뢰하고 사용하세요 (재검색하거나 다른 값으로 바꾸지 말 것). 그 블록에 없는
+정보(종목 뉴스/사유, 이번 주 일정 등)만 웹 검색으로 채우세요.
 
-## 데이터 수집 (검색 필수, 추정 금지)
-- S&P 500, Nasdaq, Dow Jones, Russell 2000, 필라델피아 반도체지수(SOX) 종가/등락률
-  — 가능하면 서로 다른 소스 2곳 이상으로 교차 확인
-- 섹터별 당일 등락률 상위/하위 5개 (Benzinga, CSIMarket 등)
-- 당일 ±5% 이상 등락 종목과 구체적 사유(실적, 가이던스, 뉴스 등)
+## 데이터 수집
+- S&P 500, Nasdaq, Dow Jones, Russell 2000, 필라델피아 반도체지수(SOX) 종가/등락률,
+  섹터별(11개 SPDR 섹터 ETF 기준) 당일 등락률 — 아래 첨부된 API 확인 수치 블록을 그대로
+  사용. 만약 특정 항목이 블록에서 "API 조회 실패"로 표시되어 있으면 그 항목만 웹 검색으로
+  보완 (추정치로 채우지 말 것)
+- 당일 ±5% 이상 등락 종목과 구체적 사유(실적, 가이던스, 뉴스 등) — 웹 검색 필수, 추정 금지
 - 시총 상위 대형주(Magnificent 7 등) 주요 움직임
 - 시장을 움직인 핵심 이슈
 - 이번 주 및 다음 주 미국 주요 경제 일정(실적, 지표, Fed 일정, 휴장 포함)
@@ -53,7 +58,8 @@ SYSTEM_PROMPT = """당신은 매일 아침 미국 주식시장 마감 요약을 
   1. 📊 [날짜] 미국 증시 마감 요약 (제목)
   2. 지수 등락 (S&P500/Nasdaq/Dow/Russell2000/SOX — 종가, 등락률. 못 찾은 지수는 행 자체를
      생략하거나 "확인 불가"라고 명시할 것 — "하락"처럼 수치 없는 애매한 값은 쓰지 말 것)
-  3. 섹터 등락 상위/하위
+  3. 섹터 등락 상위/하위 (첨부된 11개 SPDR 섹터 ETF 등락률 기준 — 상위 3~4개/하위 3~4개만
+     추려서 보여주고, 왜 그 섹터가 움직였는지는 웹 검색으로 이유를 붙일 것)
   4. 상승/하락 배경 2~3줄
   5. 🔴 주요 하락 종목 (종목명: 등락률 — 사유 / 한국영향 있으면 표시)
   6. 🟢 주요 상승 종목
@@ -63,11 +69,14 @@ SYSTEM_PROMPT = """당신은 매일 아침 미국 주식시장 마감 요약을 
 
 리포트 본문만 출력하고, 서두/말미에 부가 설명이나 인사말을 달지 마세요."""
 
-USER_PROMPT = "오늘 아침 발송할 미국 증시 마감 요약 리포트를 작성해줘."
+USER_PROMPT_TEMPLATE = """오늘 아침 발송할 미국 증시 마감 요약 리포트를 작성해줘.
+
+{data_block}"""
 
 
 def generate_report(client: anthropic.Anthropic) -> str:
-    messages = [{"role": "user", "content": USER_PROMPT}]
+    user_prompt = USER_PROMPT_TEMPLATE.format(data_block=build_data_block())
+    messages = [{"role": "user", "content": user_prompt}]
     tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 25}]
 
     response = None
@@ -82,7 +91,7 @@ def generate_report(client: anthropic.Anthropic) -> str:
         if response.stop_reason != "pause_turn":
             break
         messages = [
-            {"role": "user", "content": USER_PROMPT},
+            {"role": "user", "content": user_prompt},
             {"role": "assistant", "content": response.content},
         ]
     else:
