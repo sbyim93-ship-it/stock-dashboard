@@ -29,6 +29,7 @@ fetch_stock_quotes()에 한꺼번에 몰아서 넘길 것 (하나씩 여러 번 
 """
 
 import os
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -57,6 +58,33 @@ SECTOR_ETFS = {
     "XLRE": "리츠",
 }
 
+THEME_ETFS = {
+    # GICS 11개 섹터보다 세분화된 "테마" 강세 판단용 — 각각 실제 거래되는 니치 테마 ETF라
+    # Infostock류 유료 테마 분류 없이도 한국 테마주와 매칭 가능 (예: LIT→에코프로/LG에너지솔루션,
+    # URA→한전KPS 등 원전 관련주, REMX→성일하이텍 등 희토류/전략금속 관련주).
+    # (종목코드: (이름, 거래소구분)) — 거래소구분은 실측으로 확인한 값.
+    "SMH": ("반도체", "ND"),
+    "BOTZ": ("로봇/AI", "ND"),
+    "QTUM": ("양자컴퓨팅", "ND"),
+    "LIT": ("2차전지/리튬", "NY"),
+    "ICLN": ("신재생에너지", "ND"),
+    "TAN": ("태양광", "NY"),
+    "HACK": ("사이버보안", "NY"),
+    "SKYY": ("클라우드", "ND"),
+    "XBI": ("바이오텍", "NY"),
+    "IBB": ("바이오텍(대형)", "ND"),
+    "JETS": ("항공", "NY"),
+    "ITA": ("방산", "NA"),
+    "URA": ("우라늄", "NY"),
+    "GDX": ("금광", "NY"),
+    "COPX": ("구리", "NY"),
+    "REMX": ("희토류/전략금속", "NY"),
+    "ARKK": ("혁신기술", "NA"),
+    "ARKQ": ("자율주행/로봇", "NA"),
+    "PAVE": ("인프라", "NA"),
+    "DRIV": ("전기차/자율주행", "ND"),
+}
+
 INDICATOR_SYMBOLS = {
     "^TNX": "10Y 국채 금리",
     "^TYX": "30Y 국채 금리",
@@ -69,6 +97,10 @@ INDICATOR_SYMBOLS = {
 KIWOOM_TOKEN_URL = "https://api.kiwoom.com/oauth2/token"
 KIWOOM_QUOTE_URL = "https://api.kiwoom.com/api/us/mrkcond"
 KIWOOM_MAX_CONCURRENCY = 4  # usa20100 유량 제한이 초당 5회라 여유를 좀 두고 4로 캡 (+1700 에러는 재시도로 보완)
+# 섹터/테마/종목 조회가 전부 동시에 실행돼도(예: build_data_block에서 fetch_sectors와
+# fetch_themes가 병렬로 뜸) 실제 Kiwoom 요청은 전역으로 KIWOOM_MAX_CONCURRENCY개까지만
+# 동시에 나가야 하므로, 각 함수의 스레드풀 크기가 아니라 이 세마포어로 진짜 동시성을 제한한다.
+_KIWOOM_SEMAPHORE = threading.Semaphore(KIWOOM_MAX_CONCURRENCY)
 
 
 def _parallel_map(fn, items, max_workers: int = 16) -> list:
@@ -161,10 +193,11 @@ def _kiwoom_quote_raw(headers: dict, stk_cd: str, stex_tp: str, _retries: int = 
     """
     for attempt in range(_retries):
         try:
-            res = requests.post(
-                KIWOOM_QUOTE_URL, headers=headers,
-                json={"stex_tp": stex_tp, "stk_cd": stk_cd}, timeout=10,
-            )
+            with _KIWOOM_SEMAPHORE:
+                res = requests.post(
+                    KIWOOM_QUOTE_URL, headers=headers,
+                    json={"stex_tp": stex_tp, "stk_cd": stk_cd}, timeout=10,
+                )
             data = res.json()
             if data.get("return_code") == 0:
                 return data
@@ -196,7 +229,7 @@ def fetch_sectors() -> list[dict]:
             return None
         return {"ticker": ticker, "name": name, "changePct": float(data["flu_rt"])}
 
-    results = [r for r in _parallel_map(_one, list(SECTOR_ETFS.items()), max_workers=KIWOOM_MAX_CONCURRENCY) if r]
+    results = [r for r in _parallel_map(_one, list(SECTOR_ETFS.items())) if r]
     results.sort(key=lambda r: r["changePct"], reverse=True)
     return results
 
@@ -231,7 +264,7 @@ def fetch_stock_quotes(items: list[tuple[str, str]]) -> list[dict | None]:
             "oyr_high_date": data.get("oyr_hgst_dt"),
         }
 
-    return _parallel_map(_one, items, max_workers=KIWOOM_MAX_CONCURRENCY)
+    return _parallel_map(_one, items)
 
 
 def fetch_stock_quote(stk_cd: str, stex_tp: str = "NY") -> dict | None:
@@ -239,13 +272,31 @@ def fetch_stock_quote(stk_cd: str, stex_tp: str = "NY") -> dict | None:
     return fetch_stock_quotes([(stk_cd, stex_tp)])[0]
 
 
+def fetch_themes() -> list[dict]:
+    """
+    GICS 11개 섹터보다 세분화된 니치 테마 ETF(THEME_ETFS) 등락률을 내림차순으로 반환.
+    fetch_sectors()와 같은 용도지만 더 촘촘한 단위 — 한국 테마주 매칭에 더 유용하다.
+    """
+    items = [(ticker, stex_tp) for ticker, (_, stex_tp) in THEME_ETFS.items()]
+    quotes = fetch_stock_quotes(items)
+    results = []
+    for (ticker, (name, _)), q in zip(THEME_ETFS.items(), quotes):
+        if q:
+            results.append({"ticker": ticker, "name": name, "changePct": q["changePct"]})
+    results.sort(key=lambda r: r["changePct"], reverse=True)
+    return results
+
+
 def build_data_block() -> str:
     """Claude 프롬프트에 그대로 삽입할 '확인된 수치' 텍스트 블록."""
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=4) as pool:
         f_indices = pool.submit(fetch_indices)
         f_indicators = pool.submit(fetch_indicators)
         f_sectors = pool.submit(fetch_sectors)
-        indices, indicators, sectors = f_indices.result(), f_indicators.result(), f_sectors.result()
+        f_themes = pool.submit(fetch_themes)
+        indices, indicators, sectors, themes = (
+            f_indices.result(), f_indicators.result(), f_sectors.result(), f_themes.result(),
+        )
 
     lines = []
     if indices:
@@ -270,6 +321,15 @@ def build_data_block() -> str:
             lines.append(f"- {r['name']}({r['ticker']}): {r['changePct']:+.2f}%")
     else:
         lines.append("### 섹터: API 조회 실패 — 웹서치로 직접 확인할 것")
+
+    lines.append("")
+    if themes:
+        lines.append("### 테마 ETF 등락률 (GICS 섹터보다 세분화된 테마 단위, API로 확인된 정확한 수치, "
+                     "등락률 내림차순 — 아래 값을 그대로 쓸 것)")
+        for r in themes:
+            lines.append(f"- {r['name']}({r['ticker']}): {r['changePct']:+.2f}%")
+    else:
+        lines.append("### 테마 ETF: API 조회 실패 — 생략 가능")
 
     return "\n".join(lines)
 
