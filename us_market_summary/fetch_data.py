@@ -10,6 +10,15 @@ report.py가 Claude 호출 전에 쓰는 정밀 수치 수집 모듈. (대화형
   (usa23100 업종별 등락률 상위/하위는 종목 단위 랭킹이라 워런트/소형주가 대부분이라
   섹터 강세 판단에는 안 맞음 — 섹터 ETF 조회가 훨씬 깨끗한 신호)
 - 시장 지표(국채금리/유가/금/비트코인)도 yfinance로 가져온다.
+- 업종 세분화(fetch_finviz_industries)는 Finviz의 무료 Group Screener 페이지
+  (finviz.com/groups.ashx?g=industry&v=140&o=-perf2)를 스크래핑한다 — 로그인 없이
+  144개 업종의 당일 Change %를 공식적으로 분류해서 보여주는 몇 안 되는 무료 소스.
+  GICS 11개 섹터(SECTOR_ETFS)보다 훨씬 세밀해서 "에너지는 평범한데 우라늄만 +7~8%"
+  같은 걸 바로 잡아낸다 (Infostock류 유료 테마 DB의 실질적 무료 대체재, 2026-10-07
+  확인: 로그인/차단 없음, 컬럼 순서 No./Name/Perf Week/Month/Quart/Half/Year/YTD/
+  AvgVolume/RelVolume/Change %/Volume — Change %가 뒤에서 2번째 컬럼). 스크래핑이라
+  페이지 구조가 바뀌면 깨질 수 있어 실패 시 THEME_ETFS 바스켓(fetch_themes, Kiwoom
+  기반이라 안정적)으로 자동 폴백한다.
 - fetch_stock_quotes()는 대화형 스킬이 뉴스로 찾아낸 종목들의 정확한 현재가/등락률을
   한 번에 검증할 때 쓴다 (build_data_block에는 포함 안 됨 — 어떤 종목이 그날의 주요
   상승/하락 종목이 될지는 미리 알 수 없어서). base_close/oyr_high/oyr_high_date도 같이
@@ -35,6 +44,15 @@ from concurrent.futures import ThreadPoolExecutor
 
 import requests
 import yfinance as yf
+from bs4 import BeautifulSoup
+
+FINVIZ_INDUSTRY_URL = "https://finviz.com/groups.ashx?g=industry&v=140&o=-perf2"
+FINVIZ_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+}
 
 INDEX_SYMBOLS = {
     "^GSPC": "S&P 500",
@@ -276,6 +294,8 @@ def fetch_themes() -> list[dict]:
     """
     GICS 11개 섹터보다 세분화된 니치 테마 ETF(THEME_ETFS) 등락률을 내림차순으로 반환.
     fetch_sectors()와 같은 용도지만 더 촘촘한 단위 — 한국 테마주 매칭에 더 유용하다.
+    fetch_finviz_industries()가 더 세밀하고 공식적인 분류라 1순위이고, 이건 그게
+    실패했을 때(스크래핑이 깨지는 경우 등)의 폴백으로 쓴다.
     """
     items = [(ticker, stex_tp) for ticker, (_, stex_tp) in THEME_ETFS.items()]
     quotes = fetch_stock_quotes(items)
@@ -287,15 +307,48 @@ def fetch_themes() -> list[dict]:
     return results
 
 
+def fetch_finviz_industries() -> list[dict]:
+    """
+    Finviz의 무료 업종(industry) 그룹 성과 페이지를 스크래핑해 144개 업종의 당일 등락률을
+    내림차순으로 반환한다. 로그인 불필요, 2026-10-07 기준 접근 가능 확인됨. 컬럼 순서가
+    [순위, 이름, Perf Week, Month, Quart, Half, Year, YTD, Avg Volume, Rel Volume,
+    Change %, Volume] 이라 Change %는 뒤에서 2번째 셀 — 페이지 구조가 바뀌면 파싱이
+    깨질 수 있어 실패 시 빈 리스트 반환 (호출부에서 fetch_themes()로 폴백).
+    """
+    try:
+        res = requests.get(FINVIZ_INDUSTRY_URL, headers=FINVIZ_HEADERS, timeout=15)
+        res.raise_for_status()
+        soup = BeautifulSoup(res.text, "html.parser")
+        rows = soup.select('tr[valign="top"]')
+        results = []
+        for row in rows:
+            cells = [c.get_text(strip=True) for c in row.find_all("td")]
+            if len(cells) < 12:
+                continue
+            name = cells[1]
+            change_str = cells[-2].rstrip("%")
+            results.append({"name": name, "changePct": float(change_str)})
+        if not results:
+            print("  [Finviz] 업종 데이터 파싱 실패 — 행을 못 찾음 (페이지 구조 변경 추정)")
+            return []
+        results.sort(key=lambda r: r["changePct"], reverse=True)
+        return results
+    except Exception as e:
+        print(f"  [Finviz] 업종 조회 실패: {e}")
+        return []
+
+
 def build_data_block() -> str:
     """Claude 프롬프트에 그대로 삽입할 '확인된 수치' 텍스트 블록."""
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=5) as pool:
         f_indices = pool.submit(fetch_indices)
         f_indicators = pool.submit(fetch_indicators)
         f_sectors = pool.submit(fetch_sectors)
+        f_industries = pool.submit(fetch_finviz_industries)
         f_themes = pool.submit(fetch_themes)
-        indices, indicators, sectors, themes = (
-            f_indices.result(), f_indicators.result(), f_sectors.result(), f_themes.result(),
+        indices, indicators, sectors, industries, themes = (
+            f_indices.result(), f_indicators.result(), f_sectors.result(),
+            f_industries.result(), f_themes.result(),
         )
 
     lines = []
@@ -323,13 +376,24 @@ def build_data_block() -> str:
         lines.append("### 섹터: API 조회 실패 — 웹서치로 직접 확인할 것")
 
     lines.append("")
-    if themes:
-        lines.append("### 테마 ETF 등락률 (GICS 섹터보다 세분화된 테마 단위, API로 확인된 정확한 수치, "
-                     "등락률 내림차순 — 아래 값을 그대로 쓸 것)")
+    if industries:
+        top = industries[:10]
+        bottom = industries[-10:]
+        lines.append("### 업종 등락률 (Finviz 144개 업종 분류, GICS 11섹터보다 훨씬 세분화됨 — "
+                     "상승 상위 10개, 하락 하위 10개. 아래 값을 그대로 쓸 것)")
+        lines.append("상승 상위:")
+        for r in top:
+            lines.append(f"- {r['name']}: {r['changePct']:+.2f}%")
+        lines.append("하락 하위:")
+        for r in bottom:
+            lines.append(f"- {r['name']}: {r['changePct']:+.2f}%")
+    elif themes:
+        lines.append("### 테마 ETF 등락률 (Finviz 업종 조회 실패해서 ETF 바스켓으로 대체 — "
+                     "GICS 섹터보다 세분화된 단위, 등락률 내림차순, 아래 값을 그대로 쓸 것)")
         for r in themes:
             lines.append(f"- {r['name']}({r['ticker']}): {r['changePct']:+.2f}%")
     else:
-        lines.append("### 테마 ETF: API 조회 실패 — 생략 가능")
+        lines.append("### 업종/테마: API 조회 실패 — 생략 가능")
 
     return "\n".join(lines)
 
