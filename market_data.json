@@ -1,5 +1,5 @@
 {
-  "updated": "10/17 18:12",
+  "updated": "10/17 21:58",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
@@ -47,8 +47,8 @@
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
       "price": 29391.5,
-      "change": -810.75,
-      "changePct": -2.6844
+      "change": -811.25,
+      "changePct": -2.686
     },
     "KP_night": {
       "name": "야간KP선물",
