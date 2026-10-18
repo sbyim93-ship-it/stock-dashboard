@@ -339,15 +339,19 @@ def fetch_finviz_industries() -> list[dict]:
 
 
 def build_data_block() -> str:
-    """Claude 프롬프트에 그대로 삽입할 '확인된 수치' 텍스트 블록."""
-    with ThreadPoolExecutor(max_workers=5) as pool:
+    """
+    Claude 프롬프트에 그대로 삽입할 '확인된 수치' 텍스트 블록.
+    섹터(SPDR 11개 ETF)는 2026-10-15부터 리포트에서 뺐다 — 업종(Finviz 144개)이 더
+    세분화된 상위 호환이라 사용자가 섹터 섹션은 생략하기로 함. fetch_sectors()는 코드에
+    남겨뒀지만(재사용 가능하게) 여기서는 더 이상 호출하지 않는다.
+    """
+    with ThreadPoolExecutor(max_workers=4) as pool:
         f_indices = pool.submit(fetch_indices)
         f_indicators = pool.submit(fetch_indicators)
-        f_sectors = pool.submit(fetch_sectors)
         f_industries = pool.submit(fetch_finviz_industries)
         f_themes = pool.submit(fetch_themes)
-        indices, indicators, sectors, industries, themes = (
-            f_indices.result(), f_indicators.result(), f_sectors.result(),
+        indices, indicators, industries, themes = (
+            f_indices.result(), f_indicators.result(),
             f_industries.result(), f_themes.result(),
         )
 
@@ -366,14 +370,6 @@ def build_data_block() -> str:
             lines.append(f"- {r['name']}: {r['price']:,} ({r['changePct']:+.2f}%)")
     else:
         lines.append("### 시장 지표: API 조회 실패 — 웹서치로 직접 확인할 것")
-
-    lines.append("")
-    if sectors:
-        lines.append("### 섹터 ETF 등락률 (API로 확인된 정확한 수치, 등락률 내림차순 — 아래 값을 그대로 쓸 것)")
-        for r in sectors:
-            lines.append(f"- {r['name']}({r['ticker']}): {r['changePct']:+.2f}%")
-    else:
-        lines.append("### 섹터: API 조회 실패 — 웹서치로 직접 확인할 것")
 
     lines.append("")
     if industries:
