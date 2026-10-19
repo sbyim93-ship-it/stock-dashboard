@@ -71,7 +71,8 @@ def build_panel_data(industries: list[dict], ascending: bool, stocks_by_industry
     return panel
 
 
-TEMPLATE = """<meta name="claude:viewport-fit-sides" content="cover">
+TEMPLATE = """<meta charset="utf-8">
+<meta name="claude:viewport-fit-sides" content="cover">
 <title>업종 히트맵</title>
 <style>
 :root {
