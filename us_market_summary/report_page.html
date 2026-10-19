@@ -14,21 +14,28 @@
   --up-bg: #eaf5ee;
   --down: #c0392b;
   --down-bg: #fbeceb;
+  --gain-0: #eef3ea; --gain-1: #8fc98f; --gain-2: #1f8a4c; --gain-3: #0f5c30;
+  --loss-0: #f6ece9; --loss-1: #e59a8c; --loss-2: #c0392b; --loss-3: #7e2217;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #15140f; --surface: #1d1c17; --surface-2: #242319; --fg: #ece9e2; --muted: #9a988f;
     --border: #322f27; --accent: #7ea8d8; --up: #38b566; --up-bg: #163322; --down: #e5675c; --down-bg: #3a1e1a;
+    --gain-0: #203321; --gain-1: #3f8f54; --gain-2: #38b566; --gain-3: #7fe3a0;
+    --loss-0: #351f1b; --loss-1: #a8463a; --loss-2: #e5675c; --loss-3: #f3a89e;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #15140f; --surface: #1d1c17; --surface-2: #242319; --fg: #ece9e2; --muted: #9a988f;
   --border: #322f27; --accent: #7ea8d8; --up: #38b566; --up-bg: #163322; --down: #e5675c; --down-bg: #3a1e1a;
+  --gain-0: #203321; --gain-1: #3f8f54; --gain-2: #38b566; --gain-3: #7fe3a0;
+  --loss-0: #351f1b; --loss-1: #a8463a; --loss-2: #e5675c; --loss-3: #f3a89e;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   background: var(--bg);
@@ -36,48 +43,70 @@ body {
   font-family: "IBM Plex Sans KR", "Pretendard", -apple-system, sans-serif;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  line-height: 1.55;
-  font-size: 15.5px;
+  line-height: 1.6;
+  font-size: 18px;
 }
 .wrap { max-width: 720px; margin: 0 auto; padding-block: 18px 40px; }
-h1 { font-size: 1.25rem; margin: 0 0 2px; letter-spacing: -0.01em; }
-.subtitle { color: var(--muted); font-size: 0.82rem; margin-bottom: 16px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; }
-.section-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
-.pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-.pill { background: var(--surface-2); border-radius: 10px; padding: 6px 10px; font-size: 0.78rem; color: var(--muted); }
+h1 { font-size: 1.55rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+.subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 18px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 17px; margin-bottom: 16px; }
+.section-title { font-size: 1.14rem; font-weight: 700; margin: 0 0 12px; display: flex; align-items: center; gap: 6px; }
+.pillrow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; }
+.pill { background: var(--surface-2); border-radius: 10px; padding: 8px 12px; font-size: 0.95rem; color: var(--muted); }
 .pill b { color: var(--fg); font-variant-numeric: tabular-nums; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 420px) { .grid2 { grid-template-columns: 1fr; } }
-.stat { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
-.stat .nm { font-size: 0.78rem; color: var(--muted); margin-bottom: 3px; }
-.stat .val { font-size: 1.02rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; }
+.stat .nm { font-size: 0.9rem; color: var(--muted); margin-bottom: 4px; }
+.stat .val { font-size: 1.28rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .chg { font-weight: 700; font-variant-numeric: tabular-nums; }
 .chg.up { color: var(--up); }
 .chg.down { color: var(--down); }
-.badge { display: inline-block; border-radius: 7px; padding: 2px 7px; font-size: 0.78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.badge { display: inline-block; border-radius: 7px; padding: 3px 9px; font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .badge.up { background: var(--up-bg); color: var(--up); }
 .badge.down { background: var(--down-bg); color: var(--down); }
-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--border); }
-th { color: var(--muted); font-weight: 600; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.02em; }
+table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+th, td { text-align: left; padding: 9px 7px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.02em; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-.movecard { border-left: 3px solid var(--border); padding: 8px 0 8px 12px; margin-bottom: 10px; }
+.movecard { border-left: 4px solid var(--border); padding: 10px 0 10px 14px; margin-bottom: 12px; }
 .movecard.up { border-color: var(--up); }
 .movecard.down { border-color: var(--down); }
-.movecard .mname { font-weight: 700; }
-.movecard .mreason { color: var(--muted); font-size: 0.86rem; margin-top: 3px; }
-.theme-box { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; font-size: 0.9rem; }
+.movecard .mname { font-weight: 700; font-size: 1.05rem; }
+.movecard .mreason { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+.theme-box { background: var(--surface-2); border-radius: 10px; padding: 14px 16px; font-size: 1.02rem; }
 .linkbtn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #fff; text-decoration: none;
-  border-radius: 10px; padding: 9px 14px; font-size: 0.88rem; font-weight: 600; }
-.summary-line { font-size: 0.95rem; font-weight: 600; }
-footer { color: var(--muted); font-size: 0.72rem; margin-top: 10px; text-align: center; }
-.example-note { background: var(--down-bg); color: var(--down); border-radius: 8px; padding: 6px 10px; font-size: 0.74rem; margin-bottom: 14px; }
+  border-radius: 10px; padding: 11px 16px; font-size: 1rem; font-weight: 600; }
+.summary-line { font-size: 1.1rem; font-weight: 600; }
+footer { color: var(--muted); font-size: 0.82rem; margin-top: 12px; text-align: center; }
+.example-note { background: var(--down-bg); color: var(--down); border-radius: 8px; padding: 8px 12px; font-size: 0.85rem; margin-bottom: 16px; }
+
+/* --- 업종 히트맵(트리맵) 삽입분 --- */
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 480px) { .panels { grid-template-columns: 1fr; } }
+.panel-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
+.panel-title.gain { color: var(--gain-2); }
+.panel-title.loss { color: var(--loss-2); }
+.treemap { width: 100%; height: min(52vh, 460px); min-height: 320px; position: relative; }
+.treemap svg { width: 100%; height: 100%; display: block; }
+.cell-rect { stroke: var(--surface); stroke-width: 1.5px; cursor: pointer; }
+.cell-label { pointer-events: none; font-variant-numeric: tabular-nums; }
+.tm-tooltip {
+  position: fixed; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px; font-size: 0.92rem; box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+  opacity: 0; transition: opacity 0.1s; z-index: 50; max-width: 260px;
+}
+.tm-tooltip .t-name { font-weight: 700; margin-bottom: 2px; }
+.tm-tooltip .t-change { font-variant-numeric: tabular-nums; margin-bottom: 6px; color: var(--muted); }
+.tm-tooltip .t-stocklabel { font-size: 0.8rem; color: var(--muted); margin-bottom: 3px; }
+.tm-tooltip .t-stock-row { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; padding: 1px 0; }
+.tm-tooltip .t-stock-row .nm { color: var(--fg); }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 
 <div class="wrap">
-  <div class="example-note">⚠️ 예시 데이터 — "시작" 실행 시 실제 데이터로 교체됨</div>
+  <div class="example-note">⚠️ 업종 히트맵은 실제 데이터, 나머지 섹션은 예시 — "시작" 실행 시 전체가 실제 데이터로 교체됨</div>
   <h1>📊 미국 증시 요약</h1>
   <div class="subtitle">2026-10-20 (화) 장중 현재가 기준</div>
 
@@ -103,7 +132,9 @@ footer { color: var(--muted); font-size: 0.72rem; margin-top: 10px; text-align: 
     <p class="section-title">시장 지표</p>
     <table>
       <tr><td>10Y 국채</td><td class="num">5.18%</td><td class="num chg down">-0.19%</td></tr>
+      <tr><td>30Y 국채</td><td class="num">5.55%</td><td class="num chg down">-0.12%</td></tr>
       <tr><td>WTI 유가</td><td class="num">$94.80</td><td class="num chg up">+1.10%</td></tr>
+      <tr><td>Brent 유가</td><td class="num">$100.20</td><td class="num chg up">+1.30%</td></tr>
       <tr><td>금(Gold)</td><td class="num">$4,150.0</td><td class="num chg down">-0.40%</td></tr>
       <tr><td>비트코인</td><td class="num">$82,500</td><td class="num chg up">+0.65%</td></tr>
     </table>
@@ -111,8 +142,16 @@ footer { color: var(--muted); font-size: 0.72rem; margin-top: 10px; text-align: 
 
   <div class="card">
     <p class="section-title">📐 업종 히트맵</p>
-    <p style="font-size:0.86rem;color:var(--muted);margin:0 0 10px">업종 144개를 상승·하락 TOP10, 등락폭·대표종목까지 한눈에 — 터치/호버로 상세 확인</p>
-    <a class="linkbtn" href="https://claude.ai/artifact/A7QHP1bydAsSkCntuJ57ve">🗺️ 히트맵 열기</a>
+    <div class="panels">
+      <div>
+        <p class="panel-title gain">🟢 상승 업종 TOP10</p>
+        <div class="treemap" id="gain-map"></div>
+      </div>
+      <div>
+        <p class="panel-title loss">🔴 하락 업종 TOP10</p>
+        <div class="treemap" id="loss-map"></div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -158,3 +197,115 @@ footer { color: var(--muted); font-size: 0.72rem; margin-top: 10px; text-align: 
 
   <footer>Desktop\주식대시보드\us_market_summary · 매일 "시작"으로 갱신</footer>
 </div>
+<div class="tm-tooltip" id="tm-tooltip"></div>
+
+<script>
+const GAIN_DATA = [{"name": "Computer Hardware", "nameKo": "컴퓨터 하드웨어", "changePct": 4.06, "size": 4.06, "stocks": [{"ticker": "SMCI", "name": "슈퍼 마이크로 컴퓨터", "changePct": 2.97}, {"ticker": "NTAP", "name": "넷앱", "changePct": 2.61}, {"ticker": "DELL", "name": "델 테크놀로지스", "changePct": 2.3}, {"ticker": "HPE", "name": "휴렛 팩커드 엔터프라이즈", "changePct": 2.3}, {"ticker": "HPQ", "name": "HP", "changePct": 0.7}]}, {"name": "Internet Retail", "nameKo": "이커머스", "changePct": 3.92, "size": 3.92, "stocks": [{"ticker": "AMZN", "name": "아마존닷컴", "changePct": 5.16}, {"ticker": "W", "name": "웨이페어", "changePct": 4.18}, {"ticker": "SHOP", "name": "쇼피파이", "changePct": 1.17}, {"ticker": "ETSY", "name": "엣시", "changePct": 0.78}, {"ticker": "EBAY", "name": "이베이", "changePct": -0.28}]}, {"name": "Semiconductor Equipment & Materials", "nameKo": "반도체 장비·소재", "changePct": 2.89, "size": 2.89, "stocks": [{"ticker": "ENTG", "name": "인테그리스", "changePct": 5.54}, {"ticker": "LRCX", "name": "램 리서치", "changePct": 4.65}, {"ticker": "AMAT", "name": "어플라이드 머티어리얼즈", "changePct": 2.71}, {"ticker": "KLAC", "name": "케이엘에이", "changePct": 2.3}, {"ticker": "ASML", "name": "ASML 홀딩(ADR)", "changePct": 1.8}]}, {"name": "Auto Manufacturers", "nameKo": "완성차 제조", "changePct": 2.61, "size": 2.61, "stocks": [{"ticker": "TSLA", "name": "테슬라", "changePct": 3.99}, {"ticker": "TM", "name": "토요타 모터스(ADR)", "changePct": -0.52}, {"ticker": "RIVN", "name": "리비안 오토모티브", "changePct": -1.16}, {"ticker": "GM", "name": "제너럴 모터스", "changePct": -1.67}, {"ticker": "STLA", "name": "스텔란티스", "changePct": -1.72}]}, {"name": "Semiconductors", "nameKo": "반도체", "changePct": 2.55, "size": 2.55, "stocks": [{"ticker": "MU", "name": "마이크론 테크놀로지", "changePct": 3.25}, {"ticker": "AMD", "name": "AMD", "changePct": 3.13}, {"ticker": "AVGO", "name": "브로드컴", "changePct": 2.59}, {"ticker": "TSM", "name": "TSMC(ADR)", "changePct": 2.42}, {"ticker": "NVDA", "name": "엔비디아", "changePct": 1.84}]}, {"name": "Business Equipment & Supplies", "nameKo": "사무용 장비·용품", "changePct": 2.1, "size": 2.1, "stocks": [{"ticker": "AVY", "name": "에이버리 데니슨", "changePct": 0.03}, {"ticker": "DBI", "name": "디자이너 브랜즈", "changePct": -1.29}]}, {"name": "Steel", "nameKo": "철강", "changePct": 1.91, "size": 1.91, "stocks": [{"ticker": "CLF", "name": "클리블랜드 클리프스", "changePct": 16.96}, {"ticker": "NUE", "name": "뉴코", "changePct": 1.88}, {"ticker": "STLD", "name": "스틸 다이내믹스", "changePct": 1.23}]}, {"name": "Electronics & Computer Distribution", "nameKo": "전자·컴퓨터 유통", "changePct": 1.86, "size": 1.86, "stocks": [{"ticker": "AVT", "name": "에이브이넷", "changePct": 2.62}, {"ticker": "SNX", "name": "TD 시넥스", "changePct": 1.79}, {"ticker": "ARW", "name": "애로우 일렉트로닉스", "changePct": 1.13}]}, {"name": "Electronic Components", "nameKo": "전자부품", "changePct": 1.85, "size": 1.85, "stocks": [{"ticker": "APH", "name": "암페놀", "changePct": 2.22}, {"ticker": "GLW", "name": "코닝", "changePct": 1.69}, {"ticker": "CTS", "name": "CTS", "changePct": 1.39}, {"ticker": "TEL", "name": "TE 커넥티비티", "changePct": 0.17}]}, {"name": "Oil & Gas Drilling", "nameKo": "석유·가스 시추", "changePct": 1.75, "size": 1.75, "stocks": [{"ticker": "VAL", "name": "발라리스", "changePct": 4.03}, {"ticker": "RIG", "name": "트랜스오션", "changePct": 3.91}, {"ticker": "NE", "name": "노블", "changePct": -0.14}]}];
+const LOSS_DATA = [{"name": "REIT - Mortgage", "nameKo": "모기지 리츠", "changePct": -3.25, "size": 3.25, "stocks": [{"ticker": "STWD", "name": "스타우드 프라퍼티 트러스트", "changePct": -4.44}, {"ticker": "AGNC", "name": "AGNC 인베스트먼트", "changePct": -3.38}, {"ticker": "NLY", "name": "애널리 캐피털 매니지먼트", "changePct": -2.5}]}, {"name": "Coking Coal", "nameKo": "원료탄(코크스용 석탄)", "changePct": -3.14, "size": 3.14, "stocks": [{"ticker": "AMR", "name": "알파 메탈러지컬 리소시스", "changePct": -3.44}, {"ticker": "WPM", "name": "휘턴 프레셔스 메탈스", "changePct": -1.64}]}, {"name": "REIT - Diversified", "nameKo": "복합 리츠", "changePct": -2.34, "size": 2.34, "stocks": [{"ticker": "VICI", "name": "비치 프라퍼티스", "changePct": -2.69}, {"ticker": "EPR", "name": "EPR 프라퍼티스", "changePct": -2.46}, {"ticker": "WPC", "name": "WP 케어리", "changePct": -1.96}, {"ticker": "ADC", "name": "어그리 리얼티", "changePct": -1.85}]}, {"name": "REIT - Office", "nameKo": "오피스 리츠", "changePct": -2.33, "size": 2.33, "stocks": [{"ticker": "BXP", "name": "BXP", "changePct": -2.48}, {"ticker": "KRC", "name": "킬로이 리얼티", "changePct": -2.43}, {"ticker": "VNO", "name": "보나도 리얼티 트러스트", "changePct": -2.03}]}, {"name": "Farm Products", "nameKo": "농산물", "changePct": -2.17, "size": 2.17, "stocks": [{"ticker": "BG", "name": "번지 글로벌", "changePct": -2.89}, {"ticker": "DAR", "name": "달링 인그리디언츠", "changePct": -2.44}, {"ticker": "ADM", "name": "아처 대니얼스 미들랜드", "changePct": -2.23}]}, {"name": "Agricultural Inputs", "nameKo": "농업투입재(비료 등)", "changePct": -2.09, "size": 2.09, "stocks": [{"ticker": "FMC", "name": "FMC", "changePct": -6.36}, {"ticker": "MOS", "name": "모자이크", "changePct": -3.8}, {"ticker": "NTR", "name": "뉴트리엔", "changePct": -2.61}, {"ticker": "CF", "name": "CF 인더스트리스 홀딩스", "changePct": -2.37}, {"ticker": "CTVA", "name": "코르테바", "changePct": -0.74}]}, {"name": "Luxury Goods", "nameKo": "명품", "changePct": -1.97, "size": 1.97, "stocks": [{"ticker": "TPR", "name": "태피스트리", "changePct": -2.56}, {"ticker": "RL", "name": "랄프 로렌", "changePct": -0.7}, {"ticker": "MOV", "name": "모바도 그룹", "changePct": 0.21}]}, {"name": "Utilities - Independent Power Producers", "nameKo": "민간발전(IPP)", "changePct": -1.95, "size": 1.95, "stocks": [{"ticker": "NRG", "name": "NRG 에너지", "changePct": -4.39}, {"ticker": "VST", "name": "비스트라 에너지", "changePct": -1.19}, {"ticker": "TLN", "name": "탈런 에너지", "changePct": -0.76}]}, {"name": "Beverages - Wineries & Distilleries", "nameKo": "와인·증류주", "changePct": -1.86, "size": 1.86, "stocks": [{"ticker": "DEO", "name": "디아지오(ADR)", "changePct": -1.79}, {"ticker": "STZ", "name": "컨스털레이션 브랜즈", "changePct": -0.61}]}, {"name": "Utilities - Regulated Electric", "nameKo": "규제 전력 유틸리티", "changePct": -1.78, "size": 1.78, "stocks": [{"ticker": "EXC", "name": "엑셀론", "changePct": -2.55}, {"ticker": "ED", "name": "컨솔리데이티드 에디슨", "changePct": -2.51}, {"ticker": "SO", "name": "서던", "changePct": -1.78}, {"ticker": "NEE", "name": "넥스트에라 에너지", "changePct": -1.67}, {"ticker": "XEL", "name": "엑셀 에너지", "changePct": -1.5}]}];
+
+function colorScale(kind) {
+  const css = getComputedStyle(document.documentElement);
+  const stops = [0, 1, 2, 3].map(i => css.getPropertyValue(`--${kind}-${i}`).trim());
+  return d3.scaleLinear().domain([0, 1, 2, 3].map(i => i)).range(stops).interpolate(d3.interpolateRgb);
+}
+
+function luminance(hex) {
+  const rgb = d3.color(hex).rgb();
+  const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function truncate(text, widthPx, fontSize) {
+  const maxChars = Math.floor(widthPx / (fontSize * 0.56));
+  return text.length > maxChars ? text.slice(0, Math.max(3, maxChars - 1)) + '…' : text;
+}
+
+function renderPanel(containerId, data, kind) {
+  const container = document.getElementById(containerId);
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  container.innerHTML = '';
+  if (!data.length) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:0.9rem;padding:12px">데이터 없음</div>';
+    return;
+  }
+
+  const maxSize = d3.max(data, d => d.size) || 1;
+  const scale = colorScale(kind);
+
+  const root = d3.hierarchy({ children: data }).sum(d => d.size);
+  d3.treemap().size([width, height]).paddingInner(2)(root);
+
+  const svg = d3.select(container).append('svg').attr('viewBox', `0 0 ${width} ${height}`);
+  const tooltip = d3.select('#tm-tooltip');
+
+  const leaf = svg.selectAll('g').data(root.leaves()).join('g')
+    .attr('transform', d => `translate(${d.x0},${d.y0})`);
+
+  leaf.append('rect')
+    .attr('class', 'cell-rect')
+    .attr('width', d => Math.max(0, d.x1 - d.x0))
+    .attr('height', d => Math.max(0, d.y1 - d.y0))
+    .attr('fill', d => scale((d.data.size / maxSize) * 3))
+    .on('mousemove', (event, d) => {
+      const stockRows = d.data.stocks.length
+        ? d.data.stocks.map(s =>
+            `<div class="t-stock-row"><span class="nm">${s.name}</span><span>${s.changePct >= 0 ? '+' : ''}${s.changePct.toFixed(2)}%</span></div>`
+          ).join('')
+        : '<div class="t-stock-row" style="color:var(--muted)">대표 종목 데이터 없음</div>';
+      tooltip.style('opacity', 1)
+        .style('left', Math.min(event.clientX + 14, window.innerWidth - 270) + 'px')
+        .style('top', Math.min(event.clientY + 14, window.innerHeight - 160) + 'px')
+        .html(`<div class="t-name">${d.data.nameKo}</div>
+               <div class="t-change">${d.data.changePct >= 0 ? '+' : ''}${d.data.changePct.toFixed(2)}%</div>
+               <div class="t-stocklabel">대표 종목 등락률 TOP5</div>${stockRows}`);
+    })
+    .on('mouseleave', () => tooltip.style('opacity', 0))
+    .on('touchstart', (event, d) => {
+      event.preventDefault();
+      const stockRows = d.data.stocks.length
+        ? d.data.stocks.map(s =>
+            `<div class="t-stock-row"><span class="nm">${s.name}</span><span>${s.changePct >= 0 ? '+' : ''}${s.changePct.toFixed(2)}%</span></div>`
+          ).join('')
+        : '<div class="t-stock-row" style="color:var(--muted)">대표 종목 데이터 없음</div>';
+      const touch = event.touches[0];
+      tooltip.style('opacity', 1)
+        .style('left', Math.min(touch.clientX + 10, window.innerWidth - 270) + 'px')
+        .style('top', Math.min(touch.clientY + 10, window.innerHeight - 160) + 'px')
+        .html(`<div class="t-name">${d.data.nameKo}</div>
+               <div class="t-change">${d.data.changePct >= 0 ? '+' : ''}${d.data.changePct.toFixed(2)}%</div>
+               <div class="t-stocklabel">대표 종목 등락률 TOP5</div>${stockRows}`);
+      setTimeout(() => tooltip.style('opacity', 0), 3500);
+    });
+
+  leaf.each(function (d) {
+    const w = d.x1 - d.x0, h = d.y1 - d.y0;
+    if (w < 40 || h < 24) return;
+    const fill = scale((d.data.size / maxSize) * 3);
+    const textColor = luminance(fill) > 0.5 ? '#1a1a1a' : '#f5f5f3';
+    const g = d3.select(this);
+    const nameSize = Math.min(14, Math.max(10, w / 9));
+    g.append('text').attr('class', 'cell-label')
+      .attr('x', 6).attr('y', 17).attr('fill', textColor)
+      .style('font-size', nameSize + 'px').style('font-weight', 600)
+      .text(truncate(d.data.nameKo, w - 10, nameSize));
+    if (h > 36) {
+      g.append('text').attr('class', 'cell-label')
+        .attr('x', 6).attr('y', 34).attr('fill', textColor)
+        .style('font-size', (nameSize + 1) + 'px').style('font-weight', 700)
+        .text((d.data.changePct >= 0 ? '+' : '') + d.data.changePct.toFixed(2) + '%');
+    }
+  });
+}
+
+function renderAll() {
+  renderPanel('gain-map', GAIN_DATA, 'gain');
+  renderPanel('loss-map', LOSS_DATA, 'loss');
+}
+
+renderAll();
+window.addEventListener('resize', () => { clearTimeout(window.__rtmo); window.__rtmo = setTimeout(renderAll, 120); });
+</script>

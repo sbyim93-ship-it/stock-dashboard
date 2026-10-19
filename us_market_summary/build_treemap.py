@@ -71,53 +71,21 @@ def build_panel_data(industries: list[dict], ascending: bool, stocks_by_industry
     return panel
 
 
-TEMPLATE = """<meta charset="utf-8">
-<meta name="claude:viewport-fit-sides" content="cover">
-<title>업종 히트맵</title>
-<style>
+FRAGMENT_STYLE = """<style>
 :root {
-  --bg: #f7f6f2;
-  --surface: #ffffff;
-  --fg: #1c1b19;
-  --muted: #6b6a64;
-  --border: #e4e2db;
-  --gain-0: #eef3ea;
-  --gain-1: #8fc98f;
-  --gain-2: #1f8a4c;
-  --gain-3: #0f5c30;
-  --loss-0: #f6ece9;
-  --loss-1: #e59a8c;
-  --loss-2: #c0392b;
-  --loss-3: #7e2217;
-  color-scheme: light;
+  --gain-0: #eef3ea; --gain-1: #8fc98f; --gain-2: #1f8a4c; --gain-3: #0f5c30;
+  --loss-0: #f6ece9; --loss-1: #e59a8c; --loss-2: #c0392b; --loss-3: #7e2217;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #15140f; --surface: #1d1c17; --fg: #ece9e2; --muted: #9a988f; --border: #322f27;
     --gain-0: #203321; --gain-1: #3f8f54; --gain-2: #38b566; --gain-3: #7fe3a0;
     --loss-0: #351f1b; --loss-1: #a8463a; --loss-2: #e5675c; --loss-3: #f3a89e;
-    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #15140f; --surface: #1d1c17; --fg: #ece9e2; --muted: #9a988f; --border: #322f27;
   --gain-0: #203321; --gain-1: #3f8f54; --gain-2: #38b566; --gain-3: #7fe3a0;
   --loss-0: #351f1b; --loss-1: #a8463a; --loss-2: #e5675c; --loss-3: #f3a89e;
-  color-scheme: dark;
 }
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: "IBM Plex Sans KR", "Pretendard", -apple-system, sans-serif;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.wrap { max-width: 1400px; margin: 0 auto; padding-block: 20px 32px; }
-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; margin-bottom: 16px; }
-h1 { font-size: 1.3rem; margin: 0; letter-spacing: -0.01em; }
-.meta { color: var(--muted); font-size: 0.82rem; }
 .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 760px) { .panels { grid-template-columns: 1fr; } }
 .panel-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
@@ -127,39 +95,32 @@ h1 { font-size: 1.3rem; margin: 0; letter-spacing: -0.01em; }
 .treemap svg { width: 100%; height: 100%; display: block; }
 .cell-rect { stroke: var(--bg); stroke-width: 1.5px; cursor: pointer; }
 .cell-label { pointer-events: none; font-variant-numeric: tabular-nums; }
-.tooltip {
+.tm-tooltip {
   position: fixed; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
   border-radius: 10px; padding: 10px 12px; font-size: 0.78rem; box-shadow: 0 4px 18px rgba(0,0,0,0.2);
   opacity: 0; transition: opacity 0.1s; z-index: 50; max-width: 260px;
 }
-.tooltip .t-name { font-weight: 700; margin-bottom: 2px; }
-.tooltip .t-change { font-variant-numeric: tabular-nums; margin-bottom: 6px; color: var(--muted); }
-.tooltip .t-stocklabel { font-size: 0.68rem; color: var(--muted); margin-bottom: 3px; }
-.tooltip .t-stock-row { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; padding: 1px 0; }
-.tooltip .t-stock-row .nm { color: var(--fg); }
-footer { margin-top: 18px; color: var(--muted); font-size: 0.74rem; }
-</style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+.tm-tooltip .t-name { font-weight: 700; margin-bottom: 2px; }
+.tm-tooltip .t-change { font-variant-numeric: tabular-nums; margin-bottom: 6px; color: var(--muted); }
+.tm-tooltip .t-stocklabel { font-size: 0.68rem; color: var(--muted); margin-bottom: 3px; }
+.tm-tooltip .t-stock-row { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; padding: 1px 0; }
+.tm-tooltip .t-stock-row .nm { color: var(--fg); }
+</style>"""
 
-<div class="wrap">
-  <header>
-    <h1>업종 히트맵</h1>
-    <div class="meta">__ASOF__ · 박스 크기 = 등락폭 · 업종 상승·하락 TOP10, 호버 시 대표 종목 TOP5</div>
-  </header>
-  <div class="panels">
-    <div>
-      <p class="panel-title gain">🟢 상승 업종 TOP10</p>
-      <div class="treemap" id="gain-map"></div>
-    </div>
-    <div>
-      <p class="panel-title loss">🔴 하락 업종 TOP10</p>
-      <div class="treemap" id="loss-map"></div>
-    </div>
+# 임베드용 조각 — 호스트 페이지가 --bg/--surface/--fg/--muted/--border 토큰을 이미
+# 정의하고 있다고 가정한다 (report_page.html은 이미 이 토큰명을 그대로 씀).
+FRAGMENT_BODY = """<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<div class="panels">
+  <div>
+    <p class="panel-title gain">🟢 상승 업종 TOP10</p>
+    <div class="treemap" id="gain-map"></div>
   </div>
-  <footer>데이터: Finviz 업종 그룹 스크리너(업종 등락률) + Kiwoom 실시간 시세(업종 내 대표 종목) · 매일 아침 갱신</footer>
+  <div>
+    <p class="panel-title loss">🔴 하락 업종 TOP10</p>
+    <div class="treemap" id="loss-map"></div>
+  </div>
 </div>
-<div class="tooltip" id="tooltip"></div>
+<div class="tm-tooltip" id="tm-tooltip"></div>
 
 <script>
 const GAIN_DATA = __GAIN_JSON__;
@@ -202,7 +163,7 @@ function renderPanel(containerId, data, kind) {
   d3.treemap().size([width, height]).paddingInner(2)(root);
 
   const svg = d3.select(container).append('svg').attr('viewBox', `0 0 ${width} ${height}`);
-  const tooltip = d3.select('#tooltip');
+  const tooltip = d3.select('#tm-tooltip');
 
   const leaf = svg.selectAll('g').data(root.leaves()).join('g')
     .attr('transform', d => `translate(${d.x0},${d.y0})`);
@@ -257,13 +218,62 @@ window.addEventListener('resize', () => { clearTimeout(window.__rtmo); window.__
 </script>
 """
 
+# 단독 페이지용 래퍼 — report_page.html에 심을 때는 이 래퍼 없이 FRAGMENT_STYLE +
+# FRAGMENT_BODY만 가져다 쓴다 (report_page.html이 이미 --bg 등 토큰과 body 레이아웃을 갖고 있음).
+PAGE_WRAP = """<meta charset="utf-8">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>업종 히트맵</title>
+__FRAGMENT_STYLE__
+<style>
+:root { --bg: #f7f6f2; --surface: #ffffff; --fg: #1c1b19; --muted: #6b6a64; --border: #e4e2db; color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #15140f; --surface: #1d1c17; --fg: #ece9e2; --muted: #9a988f; --border: #322f27; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #15140f; --surface: #1d1c17; --fg: #ece9e2; --muted: #9a988f; --border: #322f27; color-scheme: dark; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: "IBM Plex Sans KR", "Pretendard", -apple-system, sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1400px; margin: 0 auto; padding-block: 20px 32px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; margin-bottom: 16px; }
+h1 { font-size: 1.3rem; margin: 0; letter-spacing: -0.01em; }
+.meta { color: var(--muted); font-size: 0.82rem; }
+footer { margin-top: 18px; color: var(--muted); font-size: 0.74rem; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
+
+<div class="wrap">
+  <header>
+    <h1>업종 히트맵</h1>
+    <div class="meta">__ASOF__ · 박스 크기 = 등락폭 · 업종 상승·하락 TOP10, 호버 시 대표 종목 TOP5</div>
+  </header>
+  __FRAGMENT_BODY__
+  <footer>데이터: Finviz 업종 그룹 스크리너(업종 등락률) + Kiwoom 실시간 시세(업종 내 대표 종목) · 매일 아침 갱신</footer>
+</div>
+"""
+
+
+def build_fragment_html(gain_panel: list[dict], loss_panel: list[dict]) -> str:
+    """report_page.html 등 다른 페이지에 그대로 붙여넣을 조각(스타일+본문+스크립트)."""
+    body = FRAGMENT_BODY
+    body = body.replace("__GAIN_JSON__", json.dumps(gain_panel, ensure_ascii=False))
+    body = body.replace("__LOSS_JSON__", json.dumps(loss_panel, ensure_ascii=False))
+    return FRAGMENT_STYLE + "\n" + body
+
 
 def build_html(gain_panel: list[dict], loss_panel: list[dict]) -> str:
+    """독립 페이지(treemap_output.html)용 — 조각을 자체 래퍼로 감싼 전체 페이지."""
+    fragment = build_fragment_html(gain_panel, loss_panel)
+    # 래퍼 자체에 style/script가 섞이지 않도록 FRAGMENT_STYLE과 FRAGMENT_BODY를 분리해서 끼운다
+    style_part, body_part = fragment.split("\n", 1)
     asof = datetime.now().strftime("%Y-%m-%d %H:%M 기준")
-    html = TEMPLATE
+    html = PAGE_WRAP
+    html = html.replace("__FRAGMENT_STYLE__", style_part)
+    html = html.replace("__FRAGMENT_BODY__", body_part)
     html = html.replace("__ASOF__", asof)
-    html = html.replace("__GAIN_JSON__", json.dumps(gain_panel, ensure_ascii=False))
-    html = html.replace("__LOSS_JSON__", json.dumps(loss_panel, ensure_ascii=False))
     return html
 
 
@@ -286,6 +296,12 @@ def main(out_path: str) -> None:
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"wrote {out_path} (gain={len(gain_panel)}, loss={len(loss_panel)} industries)")
+
+    # report_page.html에 바로 심을 조각도 같이 저장 — Claude가 Read해서 report_page.html에 삽입
+    fragment_path = out_path.rsplit(".", 1)[0] + "_fragment.html"
+    with open(fragment_path, "w", encoding="utf-8") as f:
+        f.write(build_fragment_html(gain_panel, loss_panel))
+    print(f"wrote {fragment_path} (embed this into report_page.html)")
 
 
 if __name__ == "__main__":
