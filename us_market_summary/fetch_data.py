@@ -26,6 +26,11 @@ report.py가 Claude 호출 전에 쓰는 정밀 수치 수집 모듈. (대화형
   있다 — 실제로 PTC/Cerebras가 검색엔 "오늘 급등"으로 나왔는데 oyr_high_date가 전날이라
   어제 일이 이미 반영된 상태였던 걸 이 필드로 잡아낸 적 있음 (2026-10-06).
 개별 종목 뉴스/사유/한국 증시 영향은 여전히 웹서치가 채운다.
+- fetch_kr_night_futures()는 코스피200/코스닥150 야간선물을 네이버 모바일 API로 가져온다
+  (`Desktop\주식대시보드\fetch_market.py`의 fetch_naver_night_futures() 로직을 그대로
+  재사용 — 그 파일은 최상위에서 바로 실행되는 스크립트라 import하면 부작용이 생겨서
+  로직만 복사해옴). 미국장 마감 반응이 한국 시장에 어떻게 반영됐는지 보여주는 용도라
+  리포트 맨 앞(지수 등락 바로 위)에 넣는다 (2026-10-19 사용자 요청).
 
 Kiwoom usa20100 응답의 cur_prc는 부호가 가격이 아니라 당일 등락 방향을 나타낸다
 (상승 시 +, 하락 시 -) — 그래서 실제 가격은 abs(cur_prc)를 써야 한다. 실제로 관찰됨:
@@ -154,6 +159,61 @@ def fetch_indicators() -> list[dict]:
     """국채금리/유가/금/비트코인 — 실패한 항목은 결과에서 생략."""
     results = _parallel_map(_yf_quote, list(INDICATOR_SYMBOLS.items()))
     return [r for r in results if r]
+
+
+def _parse_naver_index(d: dict) -> dict | None:
+    """네이버 /api/index/{code}/basic 응답에서 price/changePct 추출 (fetch_market.py와 동일 로직)."""
+    try:
+        price = float(str(d.get("closePrice", "")).replace(",", ""))
+        pct = float(str(d.get("fluctuationsRatio", "0")).replace(",", "").replace("+", ""))
+        direction = d.get("compareToPreviousPrice", {})
+        code = direction.get("code", "") if isinstance(direction, dict) else str(direction)
+        if "FALL" in code or "DOWN" in code or code == "2":
+            pct = -abs(pct)
+        return {"price": price, "changePct": pct}
+    except Exception:
+        return None
+
+
+def fetch_kr_night_futures() -> list[dict]:
+    """
+    코스피200 야간선물(FUT) / 코스닥150 야간선물을 네이버 모바일 API로 조회.
+    로그인 불필요. 실패한 항목은 결과에서 생략.
+    """
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "Referer": "https://m.stock.naver.com/",
+    }
+
+    def _fetch(code: str) -> dict | None:
+        try:
+            res = requests.get(f"https://m.stock.naver.com/api/index/{code}/basic",
+                                headers=headers, timeout=8)
+            if not res.ok:
+                return None
+            return _parse_naver_index(res.json())
+        except Exception:
+            return None
+
+    results = []
+    kp = _fetch("FUT")
+    if kp:
+        results.append({"name": "코스피200 야간선물", **kp})
+
+    for kq_code, name in [("KQFUT", "코스닥150 야간선물"), ("KQF", "코스닥150 야간선물")]:
+        kq = _fetch(kq_code)
+        if kq:
+            results.append({"name": name, **kq})
+            break
+    else:
+        kq = _fetch("KQ150")
+        if kq:
+            results.append({"name": "코스닥150 지수 (야간선물 데이터 없어 대체)", **kq})
+
+    return results
 
 
 def _kiwoom_token(app_key: str, app_secret: str) -> str:
@@ -345,17 +405,26 @@ def build_data_block() -> str:
     세분화된 상위 호환이라 사용자가 섹터 섹션은 생략하기로 함. fetch_sectors()는 코드에
     남겨뒀지만(재사용 가능하게) 여기서는 더 이상 호출하지 않는다.
     """
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        f_night = pool.submit(fetch_kr_night_futures)
         f_indices = pool.submit(fetch_indices)
         f_indicators = pool.submit(fetch_indicators)
         f_industries = pool.submit(fetch_finviz_industries)
         f_themes = pool.submit(fetch_themes)
-        indices, indicators, industries, themes = (
-            f_indices.result(), f_indicators.result(),
+        night, indices, indicators, industries, themes = (
+            f_night.result(), f_indices.result(), f_indicators.result(),
             f_industries.result(), f_themes.result(),
         )
 
     lines = []
+    if night:
+        lines.append("### 코스피/코스닥 야간선물 (API로 확인된 정확한 수치 — 아래 값을 그대로 쓸 것)")
+        for r in night:
+            lines.append(f"- {r['name']}: {r['price']:,} ({r['changePct']:+.2f}%)")
+    else:
+        lines.append("### 코스피/코스닥 야간선물: API 조회 실패 — 웹서치로 직접 확인하거나 생략할 것")
+    lines.append("")
+
     if indices:
         lines.append("### 지수 (API로 확인된 정확한 수치 — 아래 값을 그대로 쓸 것, 재검색/재계산 금지)")
         for r in indices:
