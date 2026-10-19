@@ -119,7 +119,7 @@ INDICATOR_SYMBOLS = {
 
 KIWOOM_TOKEN_URL = "https://api.kiwoom.com/oauth2/token"
 KIWOOM_QUOTE_URL = "https://api.kiwoom.com/api/us/mrkcond"
-KIWOOM_MAX_CONCURRENCY = 4  # usa20100 유량 제한이 초당 5회라 여유를 좀 두고 4로 캡 (+1700 에러는 재시도로 보완)
+KIWOOM_MAX_CONCURRENCY = 5  # usa20100 유량 제한이 초당 5회 — 딱 맞춰서 5로 캡 (+1700 에러는 재시도로 보완)
 # 섹터/테마/종목 조회가 전부 동시에 실행돼도(예: build_data_block에서 fetch_sectors와
 # fetch_themes가 병렬로 뜸) 실제 Kiwoom 요청은 전역으로 KIWOOM_MAX_CONCURRENCY개까지만
 # 동시에 나가야 하므로, 각 함수의 스레드풀 크기가 아니라 이 세마포어로 진짜 동시성을 제한한다.

@@ -1,0 +1,160 @@
+<meta charset="utf-8">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>미국 증시 리포트</title>
+<style>
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #f0efe9;
+  --fg: #1c1b19;
+  --muted: #6b6a64;
+  --border: #e4e2db;
+  --accent: #3d5a80;
+  --up: #1f8a4c;
+  --up-bg: #eaf5ee;
+  --down: #c0392b;
+  --down-bg: #fbeceb;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15140f; --surface: #1d1c17; --surface-2: #242319; --fg: #ece9e2; --muted: #9a988f;
+    --border: #322f27; --accent: #7ea8d8; --up: #38b566; --up-bg: #163322; --down: #e5675c; --down-bg: #3a1e1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15140f; --surface: #1d1c17; --surface-2: #242319; --fg: #ece9e2; --muted: #9a988f;
+  --border: #322f27; --accent: #7ea8d8; --up: #38b566; --up-bg: #163322; --down: #e5675c; --down-bg: #3a1e1a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "IBM Plex Sans KR", "Pretendard", -apple-system, sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  line-height: 1.55;
+  font-size: 15.5px;
+}
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 18px 40px; }
+h1 { font-size: 1.25rem; margin: 0 0 2px; letter-spacing: -0.01em; }
+.subtitle { color: var(--muted); font-size: 0.82rem; margin-bottom: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; }
+.section-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+.pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.pill { background: var(--surface-2); border-radius: 10px; padding: 6px 10px; font-size: 0.78rem; color: var(--muted); }
+.pill b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 420px) { .grid2 { grid-template-columns: 1fr; } }
+.stat { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
+.stat .nm { font-size: 0.78rem; color: var(--muted); margin-bottom: 3px; }
+.stat .val { font-size: 1.02rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.chg { font-weight: 700; font-variant-numeric: tabular-nums; }
+.chg.up { color: var(--up); }
+.chg.down { color: var(--down); }
+.badge { display: inline-block; border-radius: 7px; padding: 2px 7px; font-size: 0.78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.badge.up { background: var(--up-bg); color: var(--up); }
+.badge.down { background: var(--down-bg); color: var(--down); }
+table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.02em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.movecard { border-left: 3px solid var(--border); padding: 8px 0 8px 12px; margin-bottom: 10px; }
+.movecard.up { border-color: var(--up); }
+.movecard.down { border-color: var(--down); }
+.movecard .mname { font-weight: 700; }
+.movecard .mreason { color: var(--muted); font-size: 0.86rem; margin-top: 3px; }
+.theme-box { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; font-size: 0.9rem; }
+.linkbtn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #fff; text-decoration: none;
+  border-radius: 10px; padding: 9px 14px; font-size: 0.88rem; font-weight: 600; }
+.summary-line { font-size: 0.95rem; font-weight: 600; }
+footer { color: var(--muted); font-size: 0.72rem; margin-top: 10px; text-align: center; }
+.example-note { background: var(--down-bg); color: var(--down); border-radius: 8px; padding: 6px 10px; font-size: 0.74rem; margin-bottom: 14px; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
+
+<div class="wrap">
+  <div class="example-note">⚠️ 예시 데이터 — "시작" 실행 시 실제 데이터로 교체됨</div>
+  <h1>📊 미국 증시 요약</h1>
+  <div class="subtitle">2026-10-20 (화) 장중 현재가 기준</div>
+
+  <div class="card">
+    <p class="section-title">🇰🇷 코스피/코스닥 야간선물</p>
+    <div class="pillrow">
+      <span class="pill">코스피200 <b>897.95</b> <span class="chg up">+0.53%</span></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">지수 등락</p>
+    <div class="grid2">
+      <div class="stat"><div class="nm">S&P 500</div><div class="val">7,702.67 <span class="chg up">+0.57%</span></div></div>
+      <div class="stat"><div class="nm">Nasdaq</div><div class="val">26,900.1 <span class="chg up">+0.80%</span></div></div>
+      <div class="stat"><div class="nm">Dow Jones</div><div class="val">51,900.2 <span class="chg up">+0.31%</span></div></div>
+      <div class="stat"><div class="nm">Russell 2000</div><div class="val">2,760.4 <span class="chg down">-0.12%</span></div></div>
+      <div class="stat"><div class="nm">SOX</div><div class="val">11,950.3 <span class="chg up">+1.20%</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">시장 지표</p>
+    <table>
+      <tr><td>10Y 국채</td><td class="num">5.18%</td><td class="num chg down">-0.19%</td></tr>
+      <tr><td>WTI 유가</td><td class="num">$94.80</td><td class="num chg up">+1.10%</td></tr>
+      <tr><td>금(Gold)</td><td class="num">$4,150.0</td><td class="num chg down">-0.40%</td></tr>
+      <tr><td>비트코인</td><td class="num">$82,500</td><td class="num chg up">+0.65%</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <p class="section-title">📐 업종 히트맵</p>
+    <p style="font-size:0.86rem;color:var(--muted);margin:0 0 10px">업종 144개를 상승·하락 TOP10, 등락폭·대표종목까지 한눈에 — 터치/호버로 상세 확인</p>
+    <a class="linkbtn" href="https://claude.ai/artifact/A7QHP1bydAsSkCntuJ57ve">🗺️ 히트맵 열기</a>
+  </div>
+
+  <div class="card">
+    <p class="section-title">🟢 상승 업종 TOP3</p>
+    <div class="movecard up">
+      <div class="mname">반도체 장비·소재 <span class="badge up">+4.08%</span></div>
+      <div class="mreason">AI 서버向 장비 수요 기대 확산. 대표종목: 램리서치 +6.0%, 어플라이드머티어리얼즈 +4.5%</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">🔴 하락 업종 TOP3</p>
+    <div class="movecard down">
+      <div class="mname">모기지 리츠 <span class="badge down">-2.28%</span></div>
+      <div class="mreason">금리 재상승 우려. 대표종목: 스타우드프라퍼티 -3.5%, AGNC -2.5%</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">🟢 주요 상승 종목</p>
+    <table>
+      <tr><th>종목</th><th class="num">등락률</th></tr>
+      <tr><td>Nvidia</td><td class="num chg up">+2.3%</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <p class="section-title">🔥 오늘의 주목 테마</p>
+    <div class="theme-box">AI 반도체 장비 vs 금리민감 리츠의 로테이션.</div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">📅 주요 일정</p>
+    <table>
+      <tr><th>날짜</th><th>일정</th><th>중요도</th></tr>
+      <tr><td>10/21</td><td>예시 일정</td><td>⭐⭐</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <p class="summary-line">💡 예시 핵심 요약 문장이 여기 들어갑니다.</p>
+  </div>
+
+  <footer>Desktop\주식대시보드\us_market_summary · 매일 "시작"으로 갱신</footer>
+</div>
