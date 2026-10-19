@@ -398,6 +398,62 @@ def fetch_finviz_industries() -> list[dict]:
         return []
 
 
+FINVIZ_INDUSTRY_OVERVIEW_URL = "https://finviz.com/groups.ashx?g=industry&v=110&o=-marketcap"
+
+
+def _parse_market_cap(text: str) -> float | None:
+    """'14360.60B' / '523.1M' / '1.2T' 같은 문자열을 억 달러(B) 단위 float로 변환."""
+    text = text.strip()
+    if not text or text == "-":
+        return None
+    try:
+        unit = text[-1].upper()
+        value = float(text[:-1])
+        if unit == "T":
+            return value * 1000
+        if unit == "B":
+            return value
+        if unit == "M":
+            return value / 1000
+        return float(text)  # 단위 없는 경우
+    except ValueError:
+        return None
+
+
+def fetch_finviz_industry_treemap_data() -> list[dict]:
+    """
+    트리맵용: 144개 업종의 시가총액(marketCapB, 억 달러 단위)과 당일 등락률(changePct)을
+    한 페이지(Finviz Overview 뷰)에서 같이 가져온다. 컬럼 순서가 [순위, 이름, 종목수,
+    시가총액, 배당률, P/E, Fwd P/E, PEG, LTDebt/Eq, Debt/Eq, Float Short, Recom,
+    Change %, Volume] — 2026-10-20 확인. 실패 시 빈 리스트.
+    """
+    try:
+        res = requests.get(FINVIZ_INDUSTRY_OVERVIEW_URL, headers=FINVIZ_HEADERS, timeout=15)
+        res.raise_for_status()
+        soup = BeautifulSoup(res.text, "html.parser")
+        rows = soup.select('tr[valign="top"]')
+        results = []
+        for row in rows:
+            cells = [c.get_text(strip=True) for c in row.find_all("td")]
+            if len(cells) < 14:
+                continue
+            name = cells[1]
+            market_cap = _parse_market_cap(cells[3])
+            try:
+                change_pct = float(cells[-2].rstrip("%"))
+            except ValueError:
+                continue
+            if market_cap is None:
+                continue
+            results.append({"name": name, "marketCapB": market_cap, "changePct": change_pct})
+        if not results:
+            print("  [Finviz] 트리맵 데이터 파싱 실패 — 행을 못 찾음 (페이지 구조 변경 추정)")
+        return results
+    except Exception as e:
+        print(f"  [Finviz] 트리맵 데이터 조회 실패: {e}")
+        return []
+
+
 def build_data_block() -> str:
     """
     Claude 프롬프트에 그대로 삽입할 '확인된 수치' 텍스트 블록.
