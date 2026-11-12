@@ -1,12 +1,12 @@
 {
-  "updated": "11/12 08:04",
+  "updated": "11/12 12:45",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1336.7,
-      "change": -5.4801,
-      "changePct": -0.4083
+      "price": 1331.78,
+      "change": -4.64,
+      "changePct": -0.3472
     },
     "^DJI": {
       "name": "다우존스",
@@ -34,27 +34,27 @@
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7642.25,
-      "change": 52.5,
-      "changePct": 0.6917
+      "price": 7615.5,
+      "change": 25.75,
+      "changePct": 0.3393
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 52633.0,
-      "change": 191.0,
-      "changePct": 0.3642
+      "price": 52672.0,
+      "change": 230.0,
+      "changePct": 0.4386
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 28444.25,
-      "change": 248.5,
-      "changePct": 0.8813
+      "price": 28245.75,
+      "change": 50.0,
+      "changePct": 0.1773
     },
     "KP_night": {
       "name": "야간KP선물",
-      "price": 836.55,
-      "change": 0.0,
-      "changePct": 0.0
+      "price": 840.3,
+      "change": -3.75,
+      "changePct": -0.45
     },
     "KQ_night": {
       "name": "야간KQ선물",
