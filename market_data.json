@@ -1,60 +1,60 @@
 {
-  "updated": "11/18 03:26",
+  "updated": "11/18 10:03",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1334.95,
-      "change": -0.3501,
-      "changePct": -0.0262
+      "price": 1330.78,
+      "change": -4.47,
+      "changePct": -0.3348
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 50909.3906,
-      "change": -719.8789,
-      "changePct": -1.3943
+      "price": 50759.4219,
+      "change": -869.8477,
+      "changePct": -1.6848
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7342.8501,
-      "change": -77.3398,
-      "changePct": -1.0423
+      "price": 7340.5298,
+      "change": -79.6602,
+      "changePct": -1.0736
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 24285.0508,
-      "change": -231.8027,
-      "changePct": -0.9455
+      "price": 24328.3828,
+      "change": -188.4707,
+      "changePct": -0.7687
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 9559.1865,
-      "change": -53.7988,
-      "changePct": -0.5596
+      "price": 9642.8779,
+      "change": 29.8926,
+      "changePct": 0.311
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7351.0,
-      "change": -90.5,
-      "changePct": -1.2162
+      "price": 7411.25,
+      "change": -30.25,
+      "changePct": -0.4065
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 50896.0,
-      "change": -653.0,
-      "changePct": -1.2668
+      "price": 50955.0,
+      "change": -594.0,
+      "changePct": -1.1523
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 26959.75,
-      "change": -440.25,
-      "changePct": -1.6068
+      "price": 27450.0,
+      "change": 50.0,
+      "changePct": 0.1825
     },
     "KP_night": {
       "name": "야간KP선물",
-      "price": 767.2,
-      "change": -22.15,
-      "changePct": -2.81
+      "price": 794.55,
+      "change": -27.35,
+      "changePct": -3.56
     },
     "KQ_night": {
       "name": "야간KQ선물",
