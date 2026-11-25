@@ -1,60 +1,60 @@
 {
-  "updated": "11/25 01:16",
+  "updated": "11/25 09:45",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1344.78,
-      "change": 3.3,
-      "changePct": 0.246
+      "price": 1346.48,
+      "change": 4.4,
+      "changePct": 0.3278
     },
     "^DJI": {
       "name": "다우존스",
-      "price": 49576.3711,
-      "change": -23.5195,
-      "changePct": -0.0474
+      "price": 50018.6992,
+      "change": 418.8086,
+      "changePct": 0.8444
     },
     "^GSPC": {
       "name": "S&P 500",
-      "price": 7144.3999,
-      "change": -92.4502,
-      "changePct": -1.2775
+      "price": 7201.0898,
+      "change": -35.7603,
+      "changePct": -0.4941
     },
     "^IXIC": {
       "name": "나스닥",
-      "price": 23464.7227,
-      "change": -627.6367,
-      "changePct": -2.6051
+      "price": 23733.5352,
+      "change": -358.8242,
+      "changePct": -1.4894
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 8665.7783,
-      "change": -914.2598,
-      "changePct": -9.5434
+      "price": 8832.501,
+      "change": -747.5371,
+      "changePct": -7.8031
     },
     "ES=F": {
       "name": "E-mini S&P 500",
-      "price": 7160.5,
-      "change": -104.75,
-      "changePct": -1.4418
+      "price": 7193.75,
+      "change": -71.5,
+      "changePct": -0.9841
     },
     "YM=F": {
       "name": "E-mini Dow Jones",
-      "price": 49600.0,
-      "change": -134.0,
-      "changePct": -0.2694
+      "price": 49938.0,
+      "change": 204.0,
+      "changePct": 0.4102
     },
     "NQ=F": {
       "name": "E-mini Nasdaq 100",
-      "price": 26028.5,
-      "change": -784.75,
-      "changePct": -2.9267
+      "price": 26169.25,
+      "change": -644.0,
+      "changePct": -2.4018
     },
     "KP_night": {
       "name": "야간KP선물",
-      "price": 778.1,
-      "change": -51.45,
-      "changePct": -7.08
+      "price": 737.45,
+      "change": -40.65,
+      "changePct": -5.22
     },
     "KQ_night": {
       "name": "야간KQ선물",
