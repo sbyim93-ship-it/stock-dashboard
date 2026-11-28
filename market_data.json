@@ -1,12 +1,12 @@
 {
-  "updated": "11/28 11:17",
+  "updated": "11/28 19:30",
   "data": {
     "USDKRW=X": {
       "name": "원/달러 환율",
       "fx": true,
-      "price": 1343.53,
-      "change": -0.34,
-      "changePct": -0.0253
+      "price": 1333.9,
+      "change": -9.97,
+      "changePct": -0.7419
     },
     "^DJI": {
       "name": "다우존스",
@@ -28,8 +28,8 @@
     },
     "^SOX": {
       "name": "필라델피아 반도체",
-      "price": 9186.7061,
-      "change": 410.5371,
+      "price": 9186.71,
+      "change": 410.541,
       "changePct": 4.6779
     },
     "ES=F": {
